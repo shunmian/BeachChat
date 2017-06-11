@@ -1,0 +1,849 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		279A95941EE7BF8D00B47CC3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 279A95931EE7BF8D00B47CC3 /* main.m */; };
+		279A95971EE7BF8D00B47CC3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 279A95961EE7BF8D00B47CC3 /* AppDelegate.m */; };
+		279A959D1EE7BF8D00B47CC3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 279A959B1EE7BF8D00B47CC3 /* Main.storyboard */; };
+		279A959F1EE7BF8D00B47CC3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 279A959E1EE7BF8D00B47CC3 /* Assets.xcassets */; };
+		279A95A21EE7BF8D00B47CC3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 279A95A01EE7BF8D00B47CC3 /* LaunchScreen.storyboard */; };
+		279A95AD1EE7BF8D00B47CC3 /* BeachChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 279A95AC1EE7BF8D00B47CC3 /* BeachChatTests.m */; };
+		279A95B81EE7BF8D00B47CC3 /* BeachChatUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 279A95B71EE7BF8D00B47CC3 /* BeachChatUITests.m */; };
+		279A95CC1EE7CBCA00B47CC3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 279A95CB1EE7CBCA00B47CC3 /* GoogleService-Info.plist */; };
+		279A95CF1EE7CDEF00B47CC3 /* BCLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 279A95CE1EE7CDEF00B47CC3 /* BCLoginViewController.m */; };
+		27AEE3201EE8EC2500CFFC08 /* BCRootTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE31F1EE8EC2500CFFC08 /* BCRootTabController.m */; };
+		27AEE3231EE8EC4100CFFC08 /* BCChatManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE3221EE8EC4100CFFC08 /* BCChatManager.m */; };
+		27AEE3291EE8F33100CFFC08 /* BCChannelsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE3281EE8F33100CFFC08 /* BCChannelsTableViewController.m */; };
+		27AEE32C1EE8FA4C00CFFC08 /* BCChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE32B1EE8FA4C00CFFC08 /* BCChannel.m */; };
+		27AEE32F1EE8FA9000CFFC08 /* BCUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE32E1EE8FA9000CFFC08 /* BCUser.m */; };
+		27AEE3321EE923C500CFFC08 /* BCMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE3311EE923C500CFFC08 /* BCMessage.m */; };
+		27AEE3351EE926E400CFFC08 /* FIRUser+User.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE3341EE926E400CFFC08 /* FIRUser+User.m */; };
+		27AEE33B1EE94CFC00CFFC08 /* BCFriendRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE33A1EE94CFC00CFFC08 /* BCFriendRequest.m */; };
+		27AEE33E1EE953B500CFFC08 /* BCUserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE33D1EE953B500CFFC08 /* BCUserCell.m */; };
+		27AEE3411EEA599C00CFFC08 /* BCFriendCategoryTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE3401EEA599C00CFFC08 /* BCFriendCategoryTableViewController.m */; };
+		27AEE3441EEA64E700CFFC08 /* BCUsersTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE3431EEA64E700CFFC08 /* BCUsersTableViewController.m */; };
+		27AEE3471EEA68A200CFFC08 /* BCUserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE3461EEA68A200CFFC08 /* BCUserProfileViewController.m */; };
+		27AEE34A1EEAD54700CFFC08 /* BCTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE3491EEAD54700CFFC08 /* BCTestViewController.m */; };
+		27AEE3501EEBC8ED00CFFC08 /* BCFriendRequestsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE34F1EEBC8ED00CFFC08 /* BCFriendRequestsTableViewController.m */; };
+		27AEE3571EECDE2D00CFFC08 /* BCFriendsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE3561EECDE2D00CFFC08 /* BCFriendsTableViewController.m */; };
+		27AEE35E1EED56C200CFFC08 /* BCChannelSearchResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE35C1EED56C200CFFC08 /* BCChannelSearchResultsViewController.m */; };
+		27E4E41C1EED5C0E00B9FBE4 /* BCChannelViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27E4E41B1EED5C0E00B9FBE4 /* BCChannelViewController.m */; };
+		27E4E4221EED7F3100B9FBE4 /* BCDateGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 27E4E4211EED7F3100B9FBE4 /* BCDateGenerator.m */; };
+		AE0083D8E0B0572097107AE7 /* Pods_BeachChatUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70EB8CCB86F6E9B90E3EFF35 /* Pods_BeachChatUITests.framework */; };
+		D273D496BE76AEF89F6B2058 /* Pods_BeachChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A76902B3135BEA8157ACC95 /* Pods_BeachChat.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		279A95A91EE7BF8D00B47CC3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 279A95871EE7BF8D00B47CC3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 279A958E1EE7BF8D00B47CC3;
+			remoteInfo = BeachChat;
+		};
+		279A95B41EE7BF8D00B47CC3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 279A95871EE7BF8D00B47CC3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 279A958E1EE7BF8D00B47CC3;
+			remoteInfo = BeachChat;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		279A958F1EE7BF8D00B47CC3 /* BeachChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BeachChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		279A95931EE7BF8D00B47CC3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		279A95951EE7BF8D00B47CC3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		279A95961EE7BF8D00B47CC3 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		279A959C1EE7BF8D00B47CC3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		279A959E1EE7BF8D00B47CC3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		279A95A11EE7BF8D00B47CC3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		279A95A31EE7BF8D00B47CC3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		279A95A81EE7BF8D00B47CC3 /* BeachChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BeachChatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		279A95AC1EE7BF8D00B47CC3 /* BeachChatTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BeachChatTests.m; sourceTree = "<group>"; };
+		279A95AE1EE7BF8D00B47CC3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		279A95B31EE7BF8D00B47CC3 /* BeachChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BeachChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		279A95B71EE7BF8D00B47CC3 /* BeachChatUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BeachChatUITests.m; sourceTree = "<group>"; };
+		279A95B91EE7BF8D00B47CC3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		279A95C81EE7C5CF00B47CC3 /* BeachChat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BeachChat.entitlements; sourceTree = "<group>"; };
+		279A95CB1EE7CBCA00B47CC3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		279A95CD1EE7CDEF00B47CC3 /* BCLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCLoginViewController.h; sourceTree = "<group>"; };
+		279A95CE1EE7CDEF00B47CC3 /* BCLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCLoginViewController.m; sourceTree = "<group>"; };
+		279A95D01EE7CEB500B47CC3 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		27AEE31E1EE8EC2500CFFC08 /* BCRootTabController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCRootTabController.h; sourceTree = "<group>"; };
+		27AEE31F1EE8EC2500CFFC08 /* BCRootTabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCRootTabController.m; sourceTree = "<group>"; };
+		27AEE3211EE8EC4100CFFC08 /* BCChatManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCChatManager.h; sourceTree = "<group>"; };
+		27AEE3221EE8EC4100CFFC08 /* BCChatManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCChatManager.m; sourceTree = "<group>"; };
+		27AEE3271EE8F33100CFFC08 /* BCChannelsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCChannelsTableViewController.h; sourceTree = "<group>"; };
+		27AEE3281EE8F33100CFFC08 /* BCChannelsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCChannelsTableViewController.m; sourceTree = "<group>"; };
+		27AEE32A1EE8FA4C00CFFC08 /* BCChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCChannel.h; sourceTree = "<group>"; };
+		27AEE32B1EE8FA4C00CFFC08 /* BCChannel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCChannel.m; sourceTree = "<group>"; };
+		27AEE32D1EE8FA9000CFFC08 /* BCUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCUser.h; sourceTree = "<group>"; };
+		27AEE32E1EE8FA9000CFFC08 /* BCUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCUser.m; sourceTree = "<group>"; };
+		27AEE3301EE923C500CFFC08 /* BCMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCMessage.h; sourceTree = "<group>"; };
+		27AEE3311EE923C500CFFC08 /* BCMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCMessage.m; sourceTree = "<group>"; };
+		27AEE3331EE926E400CFFC08 /* FIRUser+User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FIRUser+User.h"; sourceTree = "<group>"; };
+		27AEE3341EE926E400CFFC08 /* FIRUser+User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FIRUser+User.m"; sourceTree = "<group>"; };
+		27AEE3391EE94CFC00CFFC08 /* BCFriendRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCFriendRequest.h; sourceTree = "<group>"; };
+		27AEE33A1EE94CFC00CFFC08 /* BCFriendRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCFriendRequest.m; sourceTree = "<group>"; };
+		27AEE33C1EE953B500CFFC08 /* BCUserCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCUserCell.h; sourceTree = "<group>"; };
+		27AEE33D1EE953B500CFFC08 /* BCUserCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCUserCell.m; sourceTree = "<group>"; };
+		27AEE33F1EEA599C00CFFC08 /* BCFriendCategoryTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCFriendCategoryTableViewController.h; sourceTree = "<group>"; };
+		27AEE3401EEA599C00CFFC08 /* BCFriendCategoryTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCFriendCategoryTableViewController.m; sourceTree = "<group>"; };
+		27AEE3421EEA64E700CFFC08 /* BCUsersTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCUsersTableViewController.h; sourceTree = "<group>"; };
+		27AEE3431EEA64E700CFFC08 /* BCUsersTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCUsersTableViewController.m; sourceTree = "<group>"; };
+		27AEE3451EEA68A200CFFC08 /* BCUserProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCUserProfileViewController.h; sourceTree = "<group>"; };
+		27AEE3461EEA68A200CFFC08 /* BCUserProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCUserProfileViewController.m; sourceTree = "<group>"; };
+		27AEE3481EEAD54700CFFC08 /* BCTestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCTestViewController.h; sourceTree = "<group>"; };
+		27AEE3491EEAD54700CFFC08 /* BCTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCTestViewController.m; sourceTree = "<group>"; };
+		27AEE34E1EEBC8ED00CFFC08 /* BCFriendRequestsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCFriendRequestsTableViewController.h; sourceTree = "<group>"; };
+		27AEE34F1EEBC8ED00CFFC08 /* BCFriendRequestsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCFriendRequestsTableViewController.m; sourceTree = "<group>"; };
+		27AEE3551EECDE2D00CFFC08 /* BCFriendsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCFriendsTableViewController.h; sourceTree = "<group>"; };
+		27AEE3561EECDE2D00CFFC08 /* BCFriendsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCFriendsTableViewController.m; sourceTree = "<group>"; };
+		27AEE35B1EED56C200CFFC08 /* BCChannelSearchResultsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCChannelSearchResultsViewController.h; sourceTree = "<group>"; };
+		27AEE35C1EED56C200CFFC08 /* BCChannelSearchResultsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCChannelSearchResultsViewController.m; sourceTree = "<group>"; };
+		27E4E41A1EED5C0E00B9FBE4 /* BCChannelViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCChannelViewController.h; sourceTree = "<group>"; };
+		27E4E41B1EED5C0E00B9FBE4 /* BCChannelViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCChannelViewController.m; sourceTree = "<group>"; };
+		27E4E4201EED7F3100B9FBE4 /* BCDateGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCDateGenerator.h; sourceTree = "<group>"; };
+		27E4E4211EED7F3100B9FBE4 /* BCDateGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCDateGenerator.m; sourceTree = "<group>"; };
+		2A76902B3135BEA8157ACC95 /* Pods_BeachChat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BeachChat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		70EB8CCB86F6E9B90E3EFF35 /* Pods_BeachChatUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BeachChatUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		95881D5CB295C31C52407FBB /* Pods-BeachChatUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BeachChatUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BeachChatUITests/Pods-BeachChatUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		ADBD7FFC56EC08458276E514 /* Pods_BeachChatTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BeachChatTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE86B9DA1BAA5D0188C0EBE2 /* Pods-BeachChat.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BeachChat.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BeachChat/Pods-BeachChat.debug.xcconfig"; sourceTree = "<group>"; };
+		DCD872D76921F4A2528961F6 /* Pods-BeachChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BeachChat.release.xcconfig"; path = "Pods/Target Support Files/Pods-BeachChat/Pods-BeachChat.release.xcconfig"; sourceTree = "<group>"; };
+		FDD5E8735FA5F532F67EB4EA /* Pods-BeachChatUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BeachChatUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-BeachChatUITests/Pods-BeachChatUITests.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		279A958C1EE7BF8D00B47CC3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D273D496BE76AEF89F6B2058 /* Pods_BeachChat.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		279A95A51EE7BF8D00B47CC3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		279A95B01EE7BF8D00B47CC3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AE0083D8E0B0572097107AE7 /* Pods_BeachChatUITests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		279A95861EE7BF8D00B47CC3 = {
+			isa = PBXGroup;
+			children = (
+				279A95911EE7BF8D00B47CC3 /* BeachChat */,
+				279A95AB1EE7BF8D00B47CC3 /* BeachChatTests */,
+				279A95B61EE7BF8D00B47CC3 /* BeachChatUITests */,
+				279A95901EE7BF8D00B47CC3 /* Products */,
+				4A55789DAABC69D49058C312 /* Pods */,
+				C9007E365B0E2AE182D6F206 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		279A95901EE7BF8D00B47CC3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				279A958F1EE7BF8D00B47CC3 /* BeachChat.app */,
+				279A95A81EE7BF8D00B47CC3 /* BeachChatTests.xctest */,
+				279A95B31EE7BF8D00B47CC3 /* BeachChatUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		279A95911EE7BF8D00B47CC3 /* BeachChat */ = {
+			isa = PBXGroup;
+			children = (
+				279A95C81EE7C5CF00B47CC3 /* BeachChat.entitlements */,
+				279A95951EE7BF8D00B47CC3 /* AppDelegate.h */,
+				279A95961EE7BF8D00B47CC3 /* AppDelegate.m */,
+				279A95CD1EE7CDEF00B47CC3 /* BCLoginViewController.h */,
+				279A95CE1EE7CDEF00B47CC3 /* BCLoginViewController.m */,
+				27AEE3581EED34C600CFFC08 /* 聊天 */,
+				27AEE34D1EEBC8C300CFFC08 /* 好友 */,
+				27AEE3331EE926E400CFFC08 /* FIRUser+User.h */,
+				27AEE3341EE926E400CFFC08 /* FIRUser+User.m */,
+				27E4E4201EED7F3100B9FBE4 /* BCDateGenerator.h */,
+				27E4E4211EED7F3100B9FBE4 /* BCDateGenerator.m */,
+				27AEE31E1EE8EC2500CFFC08 /* BCRootTabController.h */,
+				27AEE31F1EE8EC2500CFFC08 /* BCRootTabController.m */,
+				27AEE3211EE8EC4100CFFC08 /* BCChatManager.h */,
+				27AEE3221EE8EC4100CFFC08 /* BCChatManager.m */,
+				27AEE3391EE94CFC00CFFC08 /* BCFriendRequest.h */,
+				27AEE33A1EE94CFC00CFFC08 /* BCFriendRequest.m */,
+				27AEE32A1EE8FA4C00CFFC08 /* BCChannel.h */,
+				27AEE32B1EE8FA4C00CFFC08 /* BCChannel.m */,
+				27AEE3301EE923C500CFFC08 /* BCMessage.h */,
+				27AEE3311EE923C500CFFC08 /* BCMessage.m */,
+				27AEE32D1EE8FA9000CFFC08 /* BCUser.h */,
+				27AEE32E1EE8FA9000CFFC08 /* BCUser.m */,
+				27AEE33C1EE953B500CFFC08 /* BCUserCell.h */,
+				27AEE33D1EE953B500CFFC08 /* BCUserCell.m */,
+				279A95D01EE7CEB500B47CC3 /* PrefixHeader.pch */,
+				279A959B1EE7BF8D00B47CC3 /* Main.storyboard */,
+				279A959E1EE7BF8D00B47CC3 /* Assets.xcassets */,
+				279A95CB1EE7CBCA00B47CC3 /* GoogleService-Info.plist */,
+				279A95A01EE7BF8D00B47CC3 /* LaunchScreen.storyboard */,
+				27AEE3481EEAD54700CFFC08 /* BCTestViewController.h */,
+				27AEE3491EEAD54700CFFC08 /* BCTestViewController.m */,
+				279A95A31EE7BF8D00B47CC3 /* Info.plist */,
+				279A95921EE7BF8D00B47CC3 /* Supporting Files */,
+			);
+			path = BeachChat;
+			sourceTree = "<group>";
+		};
+		279A95921EE7BF8D00B47CC3 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				279A95931EE7BF8D00B47CC3 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		279A95AB1EE7BF8D00B47CC3 /* BeachChatTests */ = {
+			isa = PBXGroup;
+			children = (
+				279A95AC1EE7BF8D00B47CC3 /* BeachChatTests.m */,
+				279A95AE1EE7BF8D00B47CC3 /* Info.plist */,
+			);
+			path = BeachChatTests;
+			sourceTree = "<group>";
+		};
+		279A95B61EE7BF8D00B47CC3 /* BeachChatUITests */ = {
+			isa = PBXGroup;
+			children = (
+				279A95B71EE7BF8D00B47CC3 /* BeachChatUITests.m */,
+				279A95B91EE7BF8D00B47CC3 /* Info.plist */,
+			);
+			path = BeachChatUITests;
+			sourceTree = "<group>";
+		};
+		27AEE34B1EEBB99900CFFC08 /* 搜索好友 */ = {
+			isa = PBXGroup;
+			children = (
+				27AEE3421EEA64E700CFFC08 /* BCUsersTableViewController.h */,
+				27AEE3431EEA64E700CFFC08 /* BCUsersTableViewController.m */,
+			);
+			name = "搜索好友";
+			sourceTree = "<group>";
+		};
+		27AEE34C1EEBC8B200CFFC08 /* 好友请求 */ = {
+			isa = PBXGroup;
+			children = (
+				27AEE34E1EEBC8ED00CFFC08 /* BCFriendRequestsTableViewController.h */,
+				27AEE34F1EEBC8ED00CFFC08 /* BCFriendRequestsTableViewController.m */,
+			);
+			name = "好友请求";
+			sourceTree = "<group>";
+		};
+		27AEE34D1EEBC8C300CFFC08 /* 好友 */ = {
+			isa = PBXGroup;
+			children = (
+				27AEE33F1EEA599C00CFFC08 /* BCFriendCategoryTableViewController.h */,
+				27AEE3401EEA599C00CFFC08 /* BCFriendCategoryTableViewController.m */,
+				27AEE34C1EEBC8B200CFFC08 /* 好友请求 */,
+				27AEE34B1EEBB99900CFFC08 /* 搜索好友 */,
+				27AEE3541EECDE0100CFFC08 /* 现有好友 */,
+				27AEE3451EEA68A200CFFC08 /* BCUserProfileViewController.h */,
+				27AEE3461EEA68A200CFFC08 /* BCUserProfileViewController.m */,
+			);
+			name = "好友";
+			sourceTree = "<group>";
+		};
+		27AEE3541EECDE0100CFFC08 /* 现有好友 */ = {
+			isa = PBXGroup;
+			children = (
+				27AEE3551EECDE2D00CFFC08 /* BCFriendsTableViewController.h */,
+				27AEE3561EECDE2D00CFFC08 /* BCFriendsTableViewController.m */,
+			);
+			name = "现有好友";
+			sourceTree = "<group>";
+		};
+		27AEE3581EED34C600CFFC08 /* 聊天 */ = {
+			isa = PBXGroup;
+			children = (
+				27AEE3271EE8F33100CFFC08 /* BCChannelsTableViewController.h */,
+				27AEE3281EE8F33100CFFC08 /* BCChannelsTableViewController.m */,
+				27E4E41A1EED5C0E00B9FBE4 /* BCChannelViewController.h */,
+				27E4E41B1EED5C0E00B9FBE4 /* BCChannelViewController.m */,
+				27AEE35B1EED56C200CFFC08 /* BCChannelSearchResultsViewController.h */,
+				27AEE35C1EED56C200CFFC08 /* BCChannelSearchResultsViewController.m */,
+			);
+			name = "聊天";
+			sourceTree = "<group>";
+		};
+		4A55789DAABC69D49058C312 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				CE86B9DA1BAA5D0188C0EBE2 /* Pods-BeachChat.debug.xcconfig */,
+				DCD872D76921F4A2528961F6 /* Pods-BeachChat.release.xcconfig */,
+				95881D5CB295C31C52407FBB /* Pods-BeachChatUITests.debug.xcconfig */,
+				FDD5E8735FA5F532F67EB4EA /* Pods-BeachChatUITests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		C9007E365B0E2AE182D6F206 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				ADBD7FFC56EC08458276E514 /* Pods_BeachChatTests.framework */,
+				2A76902B3135BEA8157ACC95 /* Pods_BeachChat.framework */,
+				70EB8CCB86F6E9B90E3EFF35 /* Pods_BeachChatUITests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		279A958E1EE7BF8D00B47CC3 /* BeachChat */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 279A95BC1EE7BF8D00B47CC3 /* Build configuration list for PBXNativeTarget "BeachChat" */;
+			buildPhases = (
+				F3E66DC116747A15B1B941C0 /* [CP] Check Pods Manifest.lock */,
+				279A958B1EE7BF8D00B47CC3 /* Sources */,
+				279A958C1EE7BF8D00B47CC3 /* Frameworks */,
+				279A958D1EE7BF8D00B47CC3 /* Resources */,
+				D1DEF42709FB1E727A50EDBA /* [CP] Embed Pods Frameworks */,
+				52D389DD6F1EBA3D62924A2D /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BeachChat;
+			productName = BeachChat;
+			productReference = 279A958F1EE7BF8D00B47CC3 /* BeachChat.app */;
+			productType = "com.apple.product-type.application";
+		};
+		279A95A71EE7BF8D00B47CC3 /* BeachChatTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 279A95BF1EE7BF8D00B47CC3 /* Build configuration list for PBXNativeTarget "BeachChatTests" */;
+			buildPhases = (
+				279A95A41EE7BF8D00B47CC3 /* Sources */,
+				279A95A51EE7BF8D00B47CC3 /* Frameworks */,
+				279A95A61EE7BF8D00B47CC3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				279A95AA1EE7BF8D00B47CC3 /* PBXTargetDependency */,
+			);
+			name = BeachChatTests;
+			productName = BeachChatTests;
+			productReference = 279A95A81EE7BF8D00B47CC3 /* BeachChatTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		279A95B21EE7BF8D00B47CC3 /* BeachChatUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 279A95C21EE7BF8D00B47CC3 /* Build configuration list for PBXNativeTarget "BeachChatUITests" */;
+			buildPhases = (
+				CC8E6DC503E4F03FF1DBA67B /* [CP] Check Pods Manifest.lock */,
+				279A95AF1EE7BF8D00B47CC3 /* Sources */,
+				279A95B01EE7BF8D00B47CC3 /* Frameworks */,
+				279A95B11EE7BF8D00B47CC3 /* Resources */,
+				ECB90AC4AD5F3BBD80DE4D31 /* [CP] Embed Pods Frameworks */,
+				3D79A7F6605F3BF13C1C6F76 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				279A95B51EE7BF8D00B47CC3 /* PBXTargetDependency */,
+			);
+			name = BeachChatUITests;
+			productName = BeachChatUITests;
+			productReference = 279A95B31EE7BF8D00B47CC3 /* BeachChatUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		279A95871EE7BF8D00B47CC3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0820;
+				ORGANIZATIONNAME = LAL;
+				TargetAttributes = {
+					279A958E1EE7BF8D00B47CC3 = {
+						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = 6PLS6VLG93;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
+					};
+					279A95A71EE7BF8D00B47CC3 = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 279A958E1EE7BF8D00B47CC3;
+					};
+					279A95B21EE7BF8D00B47CC3 = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 279A958E1EE7BF8D00B47CC3;
+					};
+				};
+			};
+			buildConfigurationList = 279A958A1EE7BF8D00B47CC3 /* Build configuration list for PBXProject "BeachChat" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 279A95861EE7BF8D00B47CC3;
+			productRefGroup = 279A95901EE7BF8D00B47CC3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				279A958E1EE7BF8D00B47CC3 /* BeachChat */,
+				279A95A71EE7BF8D00B47CC3 /* BeachChatTests */,
+				279A95B21EE7BF8D00B47CC3 /* BeachChatUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		279A958D1EE7BF8D00B47CC3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				279A95CC1EE7CBCA00B47CC3 /* GoogleService-Info.plist in Resources */,
+				279A95A21EE7BF8D00B47CC3 /* LaunchScreen.storyboard in Resources */,
+				279A959F1EE7BF8D00B47CC3 /* Assets.xcassets in Resources */,
+				279A959D1EE7BF8D00B47CC3 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		279A95A61EE7BF8D00B47CC3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		279A95B11EE7BF8D00B47CC3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3D79A7F6605F3BF13C1C6F76 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BeachChatUITests/Pods-BeachChatUITests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		52D389DD6F1EBA3D62924A2D /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BeachChat/Pods-BeachChat-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CC8E6DC503E4F03FF1DBA67B /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		D1DEF42709FB1E727A50EDBA /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BeachChat/Pods-BeachChat-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		ECB90AC4AD5F3BBD80DE4D31 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BeachChatUITests/Pods-BeachChatUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F3E66DC116747A15B1B941C0 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		279A958B1EE7BF8D00B47CC3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				27AEE3411EEA599C00CFFC08 /* BCFriendCategoryTableViewController.m in Sources */,
+				27AEE3201EE8EC2500CFFC08 /* BCRootTabController.m in Sources */,
+				27AEE3231EE8EC4100CFFC08 /* BCChatManager.m in Sources */,
+				27AEE33B1EE94CFC00CFFC08 /* BCFriendRequest.m in Sources */,
+				27AEE3441EEA64E700CFFC08 /* BCUsersTableViewController.m in Sources */,
+				27AEE32C1EE8FA4C00CFFC08 /* BCChannel.m in Sources */,
+				27E4E4221EED7F3100B9FBE4 /* BCDateGenerator.m in Sources */,
+				279A95971EE7BF8D00B47CC3 /* AppDelegate.m in Sources */,
+				279A95941EE7BF8D00B47CC3 /* main.m in Sources */,
+				27AEE33E1EE953B500CFFC08 /* BCUserCell.m in Sources */,
+				27E4E41C1EED5C0E00B9FBE4 /* BCChannelViewController.m in Sources */,
+				27AEE3291EE8F33100CFFC08 /* BCChannelsTableViewController.m in Sources */,
+				27AEE3501EEBC8ED00CFFC08 /* BCFriendRequestsTableViewController.m in Sources */,
+				27AEE35E1EED56C200CFFC08 /* BCChannelSearchResultsViewController.m in Sources */,
+				279A95CF1EE7CDEF00B47CC3 /* BCLoginViewController.m in Sources */,
+				27AEE3571EECDE2D00CFFC08 /* BCFriendsTableViewController.m in Sources */,
+				27AEE3471EEA68A200CFFC08 /* BCUserProfileViewController.m in Sources */,
+				27AEE34A1EEAD54700CFFC08 /* BCTestViewController.m in Sources */,
+				27AEE3351EE926E400CFFC08 /* FIRUser+User.m in Sources */,
+				27AEE3321EE923C500CFFC08 /* BCMessage.m in Sources */,
+				27AEE32F1EE8FA9000CFFC08 /* BCUser.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		279A95A41EE7BF8D00B47CC3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				279A95AD1EE7BF8D00B47CC3 /* BeachChatTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		279A95AF1EE7BF8D00B47CC3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				279A95B81EE7BF8D00B47CC3 /* BeachChatUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		279A95AA1EE7BF8D00B47CC3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 279A958E1EE7BF8D00B47CC3 /* BeachChat */;
+			targetProxy = 279A95A91EE7BF8D00B47CC3 /* PBXContainerItemProxy */;
+		};
+		279A95B51EE7BF8D00B47CC3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 279A958E1EE7BF8D00B47CC3 /* BeachChat */;
+			targetProxy = 279A95B41EE7BF8D00B47CC3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		279A959B1EE7BF8D00B47CC3 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				279A959C1EE7BF8D00B47CC3 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		279A95A01EE7BF8D00B47CC3 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				279A95A11EE7BF8D00B47CC3 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		279A95BA1EE7BF8D00B47CC3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/$(PROJECT_NAME)/PrefixHeader.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		279A95BB1EE7BF8D00B47CC3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		279A95BD1EE7BF8D00B47CC3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CE86B9DA1BAA5D0188C0EBE2 /* Pods-BeachChat.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = BeachChat/BeachChat.entitlements;
+				DEVELOPMENT_TEAM = 6PLS6VLG93;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/BeachChat",
+					"$(PROJECT_DIR)",
+				);
+				INFOPLIST_FILE = BeachChat/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = LAL.BeachChat;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		279A95BE1EE7BF8D00B47CC3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DCD872D76921F4A2528961F6 /* Pods-BeachChat.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = BeachChat/BeachChat.entitlements;
+				DEVELOPMENT_TEAM = 6PLS6VLG93;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/BeachChat",
+					"$(PROJECT_DIR)",
+				);
+				INFOPLIST_FILE = BeachChat/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = LAL.BeachChat;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		279A95C01EE7BF8D00B47CC3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = BeachChatTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = LAL.BeachChatTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BeachChat.app/BeachChat";
+			};
+			name = Debug;
+		};
+		279A95C11EE7BF8D00B47CC3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = BeachChatTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = LAL.BeachChatTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BeachChat.app/BeachChat";
+			};
+			name = Release;
+		};
+		279A95C31EE7BF8D00B47CC3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 95881D5CB295C31C52407FBB /* Pods-BeachChatUITests.debug.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = BeachChatUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = LAL.BeachChatUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = BeachChat;
+			};
+			name = Debug;
+		};
+		279A95C41EE7BF8D00B47CC3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FDD5E8735FA5F532F67EB4EA /* Pods-BeachChatUITests.release.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = BeachChatUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = LAL.BeachChatUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = BeachChat;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		279A958A1EE7BF8D00B47CC3 /* Build configuration list for PBXProject "BeachChat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				279A95BA1EE7BF8D00B47CC3 /* Debug */,
+				279A95BB1EE7BF8D00B47CC3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		279A95BC1EE7BF8D00B47CC3 /* Build configuration list for PBXNativeTarget "BeachChat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				279A95BD1EE7BF8D00B47CC3 /* Debug */,
+				279A95BE1EE7BF8D00B47CC3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		279A95BF1EE7BF8D00B47CC3 /* Build configuration list for PBXNativeTarget "BeachChatTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				279A95C01EE7BF8D00B47CC3 /* Debug */,
+				279A95C11EE7BF8D00B47CC3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		279A95C21EE7BF8D00B47CC3 /* Build configuration list for PBXNativeTarget "BeachChatUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				279A95C31EE7BF8D00B47CC3 /* Debug */,
+				279A95C41EE7BF8D00B47CC3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 279A95871EE7BF8D00B47CC3 /* Project object */;
+}

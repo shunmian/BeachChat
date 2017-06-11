@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>370772561251-i6totu2p2n3p3uv82n29ik18rs5bg9rm.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.370772561251-i6totu2p2n3p3uv82n29ik18rs5bg9rm</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAsjsiuaoWqvd2-ucPfItKWldeh5pjIS38</string>
+	<key>GCM_SENDER_ID</key>
+	<string>370772561251</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>LAL.BeachChat</string>
+	<key>PROJECT_ID</key>
+	<string>beachchat-b169a</string>
+	<key>STORAGE_BUCKET</key>
+	<string>beachchat-b169a.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:370772561251:ios:36b1d4b072edc15b</string>
+	<key>DATABASE_URL</key>
+	<string>https://beachchat-b169a.firebaseio.com</string>
+</dict>
+</plist>
