@@ -41,6 +41,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.collectionView.collectionViewLayout.incomingAvatarViewSize = CGSizeZero;
+    self.collectionView.collectionViewLayout.outgoingAvatarViewSize = CGSizeZero;
     // Do any additional setup after loading the view.
 }
 
@@ -66,25 +69,35 @@
         FIRDatabaseReference *ref = [self.channelMessagesRef childByAutoId];
         [ref setValue:[message json] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref) {
             if(!error){
-                NSLog(@"message sent successfully:%@",message);
-                BCUser *otherUser = [self.channel otherOf:self.chatManager.bcUser];
-                FIRDatabaseReference *toParentChannelRef = [self.chatManager.channelRef.parent child:otherUser.validKey];
-                
-                FIRDatabaseReference *toChannelRef = [toParentChannelRef child:[BCFriendRequest validKeyFrom:self.chatManager.bcUser to:otherUser]];
-                
-                [toChannelRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+                [ref observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+                    BCMessage *message = [BCMessage convertedToMessageFromJSON:snapshot];
+                    NSLog(@"message sent successfully:%@",message);
+                    BCUser *otherUser = [self.channel otherOf:self.chatManager.bcUser];
+                    FIRDatabaseReference *toParentChannelRef = [self.chatManager.channelRef.parent child:otherUser.validKey];
+                    FIRDatabaseReference *toChannelRef = [toParentChannelRef child:[BCFriendRequest validKeyFrom:self.chatManager.bcUser to:otherUser]];
                     
-                    if([snapshot.value isKindOfClass:[NSNull class]]){
-                        // if toUser don't have this channel, creat it, then add the message
-                        [toChannelRef setValue:[self.channel json]];
-                    }else{
-                        
-                    }
+                    //update last message
+                    FIRDatabaseReference *fromChannelRef = [self.chatManager.channelRef child:self.channel.validKey];
+                    [[fromChannelRef child:@"lastMessage"] setValue:[message json]];
+                    [[fromChannelRef child:@"updatedDate"] setValue:message.createdDate.description];
+                    
+                    [toChannelRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+                        if([snapshot.value isKindOfClass:[NSNull class]]){
+                            // if toUser don't have this channel, creat it
+                            [toChannelRef setValue:[self.channel json]];
+                        }else{
+                            
+                        }
+                        [[toChannelRef child:@"lastMessage"] setValue:[message json]];
+                        [[toChannelRef child:@"updatedDate"] setValue:message.createdDate.description];
+                    }];
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self.collectionView reloadData];
+                    });
+                    
+                    
                 }];
-            
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.collectionView reloadData];
-                });
             }else{
                 NSLog(@"message not sent...");
             }

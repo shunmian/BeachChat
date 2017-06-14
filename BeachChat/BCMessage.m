@@ -25,7 +25,7 @@
 -(instancetype)initWithAuthor:(BCUser *)author
                    channelKey:(NSString *)channelKey
                          body:(NSString *)body{
-
+    
     if(self = [self initWithAuthor:author
                         channelKey:channelKey
                               body:body
@@ -39,7 +39,7 @@
     NSDictionary *dict = @{@"author":[self.author json],
                            @"channelKey":self.channelKey,
                            @"body":self.body,
-                           @"createdDate":self.createdDate.description};
+                           @"createdDate":[FIRServerValue timestamp]};
 
     return dict;
 }
@@ -50,14 +50,20 @@
     BCUser *author = [BCUser convertedFromJSON:[snapshot childSnapshotForPath:@"author"]];
     NSString *body = dataDict[@"body"];
     
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
-    NSString *createdDateDescription = dataDict[@"createdDate"];
-    NSDate *createdDate = [dateFormatter dateFromString:createdDateDescription];
+    NSNumber *timeInterval = dataDict[@"createdDate"];
+    
+    NSTimeInterval t = timeInterval.integerValue;
+    NSDate *sourceDate = [NSDate dateWithTimeIntervalSince1970:t/1000];
+    NSDate *destDate = [BCDate convertToLoalTimeZone:sourceDate];
+    
+//    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+//    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
+//    NSString *createdDateDescription = dataDict[@"createdDate"];
+//    NSDate *createdDate = [dateFormatter dateFromString:createdDateDescription];
     
     NSString *channelKey = dataDict[@"channelKey"];
     
-    BCMessage *message = [[BCMessage alloc] initWithAuthor:author channelKey:channelKey body:body createdDate:createdDate];
+    BCMessage *message = [[BCMessage alloc] initWithAuthor:author channelKey:channelKey body:body createdDate:destDate];
     return message;
 }
 
@@ -69,7 +75,7 @@
     }
     
     NSArray *sortedMessages = [messages sortedArrayUsingComparator:^NSComparisonResult(BCMessage *obj1, BCMessage * obj2) {
-        return [obj2.createdDate compare:obj1.createdDate];
+        return [obj1.createdDate compare:obj2.createdDate];
     }];
     
     return sortedMessages;

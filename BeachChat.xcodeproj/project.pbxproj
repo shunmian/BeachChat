@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		272B8DE41EF11FB300F1822D /* BCDate.m in Sources */ = {isa = PBXBuildFile; fileRef = 272B8DE31EF11FB300F1822D /* BCDate.m */; };
+		272B8DEA1EF148AD00F1822D /* BCChannelTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 272B8DE91EF148AD00F1822D /* BCChannelTableViewCell.m */; };
 		279A95941EE7BF8D00B47CC3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 279A95931EE7BF8D00B47CC3 /* main.m */; };
 		279A95971EE7BF8D00B47CC3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 279A95961EE7BF8D00B47CC3 /* AppDelegate.m */; };
 		279A959D1EE7BF8D00B47CC3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 279A959B1EE7BF8D00B47CC3 /* Main.storyboard */; };
@@ -33,7 +35,6 @@
 		27AEE3571EECDE2D00CFFC08 /* BCFriendsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE3561EECDE2D00CFFC08 /* BCFriendsTableViewController.m */; };
 		27AEE35E1EED56C200CFFC08 /* BCChannelSearchResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE35C1EED56C200CFFC08 /* BCChannelSearchResultsViewController.m */; };
 		27E4E41C1EED5C0E00B9FBE4 /* BCChannelViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27E4E41B1EED5C0E00B9FBE4 /* BCChannelViewController.m */; };
-		27E4E4221EED7F3100B9FBE4 /* BCDateGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 27E4E4211EED7F3100B9FBE4 /* BCDateGenerator.m */; };
 		AE0083D8E0B0572097107AE7 /* Pods_BeachChatUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70EB8CCB86F6E9B90E3EFF35 /* Pods_BeachChatUITests.framework */; };
 		D273D496BE76AEF89F6B2058 /* Pods_BeachChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A76902B3135BEA8157ACC95 /* Pods_BeachChat.framework */; };
 /* End PBXBuildFile section */
@@ -56,6 +57,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		272B8DE21EF11FB300F1822D /* BCDate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCDate.h; sourceTree = "<group>"; };
+		272B8DE31EF11FB300F1822D /* BCDate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCDate.m; sourceTree = "<group>"; };
+		272B8DE81EF148AD00F1822D /* BCChannelTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCChannelTableViewCell.h; sourceTree = "<group>"; };
+		272B8DE91EF148AD00F1822D /* BCChannelTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCChannelTableViewCell.m; sourceTree = "<group>"; };
 		279A958F1EE7BF8D00B47CC3 /* BeachChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BeachChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		279A95931EE7BF8D00B47CC3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		279A95951EE7BF8D00B47CC3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -109,8 +114,6 @@
 		27AEE35C1EED56C200CFFC08 /* BCChannelSearchResultsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCChannelSearchResultsViewController.m; sourceTree = "<group>"; };
 		27E4E41A1EED5C0E00B9FBE4 /* BCChannelViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCChannelViewController.h; sourceTree = "<group>"; };
 		27E4E41B1EED5C0E00B9FBE4 /* BCChannelViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCChannelViewController.m; sourceTree = "<group>"; };
-		27E4E4201EED7F3100B9FBE4 /* BCDateGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCDateGenerator.h; sourceTree = "<group>"; };
-		27E4E4211EED7F3100B9FBE4 /* BCDateGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCDateGenerator.m; sourceTree = "<group>"; };
 		2A76902B3135BEA8157ACC95 /* Pods_BeachChat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BeachChat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		70EB8CCB86F6E9B90E3EFF35 /* Pods_BeachChatUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BeachChatUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		95881D5CB295C31C52407FBB /* Pods-BeachChatUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BeachChatUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BeachChatUITests/Pods-BeachChatUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -181,10 +184,10 @@
 				27AEE34D1EEBC8C300CFFC08 /* 好友 */,
 				27AEE3331EE926E400CFFC08 /* FIRUser+User.h */,
 				27AEE3341EE926E400CFFC08 /* FIRUser+User.m */,
-				27E4E4201EED7F3100B9FBE4 /* BCDateGenerator.h */,
-				27E4E4211EED7F3100B9FBE4 /* BCDateGenerator.m */,
 				27AEE31E1EE8EC2500CFFC08 /* BCRootTabController.h */,
 				27AEE31F1EE8EC2500CFFC08 /* BCRootTabController.m */,
+				272B8DE21EF11FB300F1822D /* BCDate.h */,
+				272B8DE31EF11FB300F1822D /* BCDate.m */,
 				27AEE3211EE8EC4100CFFC08 /* BCChatManager.h */,
 				27AEE3221EE8EC4100CFFC08 /* BCChatManager.m */,
 				27AEE3391EE94CFC00CFFC08 /* BCFriendRequest.h */,
@@ -282,6 +285,8 @@
 			children = (
 				27AEE3271EE8F33100CFFC08 /* BCChannelsTableViewController.h */,
 				27AEE3281EE8F33100CFFC08 /* BCChannelsTableViewController.m */,
+				272B8DE81EF148AD00F1822D /* BCChannelTableViewCell.h */,
+				272B8DE91EF148AD00F1822D /* BCChannelTableViewCell.m */,
 				27E4E41A1EED5C0E00B9FBE4 /* BCChannelViewController.h */,
 				27E4E41B1EED5C0E00B9FBE4 /* BCChannelViewController.m */,
 				27AEE35B1EED56C200CFFC08 /* BCChannelSearchResultsViewController.h */,
@@ -556,12 +561,13 @@
 				27AEE33B1EE94CFC00CFFC08 /* BCFriendRequest.m in Sources */,
 				27AEE3441EEA64E700CFFC08 /* BCUsersTableViewController.m in Sources */,
 				27AEE32C1EE8FA4C00CFFC08 /* BCChannel.m in Sources */,
-				27E4E4221EED7F3100B9FBE4 /* BCDateGenerator.m in Sources */,
 				279A95971EE7BF8D00B47CC3 /* AppDelegate.m in Sources */,
 				279A95941EE7BF8D00B47CC3 /* main.m in Sources */,
+				272B8DEA1EF148AD00F1822D /* BCChannelTableViewCell.m in Sources */,
 				27AEE33E1EE953B500CFFC08 /* BCUserCell.m in Sources */,
 				27E4E41C1EED5C0E00B9FBE4 /* BCChannelViewController.m in Sources */,
 				27AEE3291EE8F33100CFFC08 /* BCChannelsTableViewController.m in Sources */,
+				272B8DE41EF11FB300F1822D /* BCDate.m in Sources */,
 				27AEE3501EEBC8ED00CFFC08 /* BCFriendRequestsTableViewController.m in Sources */,
 				27AEE35E1EED56C200CFFC08 /* BCChannelSearchResultsViewController.m in Sources */,
 				279A95CF1EE7CDEF00B47CC3 /* BCLoginViewController.m in Sources */,

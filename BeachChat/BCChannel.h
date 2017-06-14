@@ -33,7 +33,6 @@
 
 -(NSDictionary *)json;
 +(BCChannel *)convertedToChannelFromJSON:(FIRDataSnapshot *)snapshot;
-
 -(BCUser *)otherOf:(BCUser *)user;
 
 /* return channels sortedby updated date

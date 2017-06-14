@@ -65,8 +65,8 @@
                            @"displayName":self.displayName,
                            @"creator":[self.creator json],
                            @"otherUsers":otherUsersJson,
-                           @"createdDate":self.createdDate.description,
-                           @"updatedDate":self.updatedDate.description};
+                           @"createdDate":[FIRServerValue timestamp],
+                           @"updatedDate":[FIRServerValue timestamp]};
     return dict;
 }
 
@@ -83,12 +83,20 @@
         [otherUsers addObject:user];
     }
     
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
-    NSString *createdDateDescription = dataDict[@"createdDate"];
-    NSDate *createdDate = [dateFormatter dateFromString:createdDateDescription];
-    NSString *updatedDateDescription = dataDict[@"updatedDate"];
-    NSDate *updatedDate = [dateFormatter dateFromString:updatedDateDescription];
+    NSNumber *timeInterval = dataDict[@"createdDate"];
+    NSTimeInterval t = timeInterval.integerValue;
+    NSDate *sourceDate = [NSDate dateWithTimeIntervalSince1970:t/1000];
+    NSDate *createdDate = [BCDate convertToLoalTimeZone:sourceDate];
+    
+    
+    timeInterval = dataDict[@"updatedDate"];
+    t = timeInterval.integerValue;
+    sourceDate = [NSDate dateWithTimeIntervalSince1970:t/1000];
+    NSDate *updatedDate = [BCDate convertToLoalTimeZone:sourceDate];
+    
+    FIRDataSnapshot *lastMessageSnapshot = [snapshot childSnapshotForPath:@"lastMessage"];
+    BCMessage *lastMessage = [BCMessage convertedToMessageFromJSON:lastMessageSnapshot];
+
     
     
     BCChannel *channel = [[BCChannel alloc] initWithCreator:creator
@@ -96,7 +104,7 @@
                                                 displayName:dataDict[@"displayName"]
                                                 createdDate:createdDate
                                                 updatedDate:updatedDate
-                                                lastMessage:dataDict[@"lastMessage"]];
+                                                lastMessage:lastMessage];
     return channel;
 }
 

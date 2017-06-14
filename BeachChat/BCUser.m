@@ -47,4 +47,10 @@
     return [NSArray arrayWithArray:users] ;
 }
 
+-(BOOL)isEqual:(id)object{
+    NSAssert([object isKindOfClass:[BCUser class]], @"object should be BCUseer class");
+    BCUser *other = (BCUser *)object;
+    return [self.validKey isEqualToString:other.validKey];
+}
+
 @end

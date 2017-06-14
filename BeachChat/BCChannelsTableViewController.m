@@ -9,6 +9,7 @@
 #import "BCChannelsTableViewController.h"
 #import "BCChannelViewController.h"
 #import "BCChannel.h"
+#import "BCChannelTableViewCell.h"
 
 @interface BCChannelsTableViewController ()
 @property (nonatomic, strong) BCChatManager *chatManager;
@@ -22,12 +23,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    self.tableView.rowHeight = 60;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -74,14 +70,27 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"channelCell" forIndexPath:indexPath];
+    BCChannelTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"channelCell" forIndexPath:indexPath];
     BCChannel *channel = self.channels[indexPath.row];
-    cell.textLabel.text = channel.displayName;
+    NSString *displayName;
+    if([self.chatManager.bcUser isEqual:channel.creator]){
+        displayName = channel.otherUsers[0].displayName;
+    }else{
+        displayName = channel.creator.displayName;
+    }
+    
+    cell.nameLabel.text = displayName;
+    cell.lastMessageBodyLabel.text = channel.lastMessage.body;
+    cell.updatedDateLabel.text = channel.updatedDate.description;
     return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [self performSegueWithIdentifier:@"toChannelSegue" sender:indexPath];
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 60;
 }
 
 #pragma mark - RACSignal

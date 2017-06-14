@@ -11,13 +11,13 @@
 
 // Include any system framework and library headers here that should be included in all compilation units.
 #import <ReactiveCocoa/ReactiveCocoa.h>
+#import <Masonry/Masonry.h>
 #import <FirebaseCore/FirebaseCore.h>
 #import <FirebaseAuth/FirebaseAuth.h>
 #import <FirebaseAuthUI/FirebaseAuthUI.h>
 #import <FirebaseDatabase/FirebaseDatabase.h>
 #import "BCChatManager.h"
-#import "BCDateGenerator.h"
-
+#import "BCDate.h"
 // You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
 
 #endif /* CommonHeader_pch */

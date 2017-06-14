@@ -59,8 +59,16 @@
         }else{
 //            BCChannel *channel = [BCChannel convertedToChannelFromJSON:snapshot];
             FIRDataSnapshot *updatedSnapshot = [snapshot childSnapshotForPath:@"updatedDate"];
-            [updatedSnapshot.ref setValue:[NSDate date].description];
-            [self.tabBarController setSelectedIndex:0];
+            [updatedSnapshot.ref setValue:[FIRServerValue timestamp] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref) {
+                if(!error){
+                    [self.tabBarController setSelectedIndex:0];
+                    UINavigationController *navc = self.tabBarController.viewControllers[0];
+                    BCChannelsTableViewController *ctvc =  navc.viewControllers[0];
+                    [ctvc.tableView reloadData];
+                    [ctvc tableView:ctvc.tableView didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+                }
+            }];
+
         }
     }];
 }
