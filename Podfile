@@ -14,8 +14,8 @@ target 'BeachChat' do
   pod 'JSQMessagesViewController'
 
 #  used for development from released frameworks
-  use_frameworks!
-  pod 'FirebaseUI', :podspec => "https://raw.githubusercontent.com/firebase/FirebaseUI-iOS/master/FirebaseUI.podspec"
+  #use_frameworks!
+  #pod 'FirebaseUI', :podspec => "https://raw.githubusercontent.com/firebase/FirebaseUI-iOS/master/FirebaseUI.podspec"
 
 
   target 'BeachChatUITests' do

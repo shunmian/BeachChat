@@ -1,6 +1,0 @@
-framework module Pods_BeachChatUITests {
-  umbrella header "Pods-BeachChatUITests-umbrella.h"
-
-  export *
-  module * { export * }
-}

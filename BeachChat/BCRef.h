@@ -10,7 +10,7 @@
 
 static FIRDatabaseReference *root = nil;
 static FIRStorageReference *storage = nil;
-static NSString *const kAppURL = @"https://beachchat-b169a.firebaseio.com/";
+static NSString *const kAppURL = @"gs://beachchat-b169a.appspot.com/";
 
 @interface BCRef : NSObject
 +(FIRDatabaseReference *)root;

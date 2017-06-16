@@ -36,5 +36,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Allow BeachChat to Your Photos </string>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow BeachChat to Your Camera</string>
 </dict>
 </plist>

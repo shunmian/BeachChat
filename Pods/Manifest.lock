@@ -1,15 +1,4 @@
 PODS:
-  - Bolts (1.8.4):
-    - Bolts/AppLinks (= 1.8.4)
-    - Bolts/Tasks (= 1.8.4)
-  - Bolts/AppLinks (1.8.4):
-    - Bolts/Tasks
-  - Bolts/Tasks (1.8.4)
-  - Fabric (1.6.11)
-  - FBSDKCoreKit (4.23.0):
-    - Bolts (~> 1.7)
-  - FBSDKLoginKit (4.23.0):
-    - FBSDKCoreKit
   - Firebase/Auth (3.15.0):
     - Firebase/Core
     - FirebaseAuth (= 3.1.1)
@@ -38,39 +27,6 @@ PODS:
   - FirebaseStorage (1.1.0):
     - FirebaseAnalytics (~> 3.7)
     - GTMSessionFetcher/Core (~> 1.1)
-  - FirebaseUI (4.0.0):
-    - FirebaseUI/All (= 4.0.0)
-  - FirebaseUI/All (4.0.0):
-    - FirebaseUI/Auth
-    - FirebaseUI/Database
-    - FirebaseUI/Facebook
-    - FirebaseUI/Google
-    - FirebaseUI/Phone
-    - FirebaseUI/Storage
-    - FirebaseUI/Twitter
-  - FirebaseUI/Auth (4.0.0):
-    - Firebase/Auth
-  - FirebaseUI/Database (4.0.0):
-    - Firebase/Database
-  - FirebaseUI/Facebook (4.0.0):
-    - FBSDKLoginKit (~> 4.0)
-    - FirebaseUI/Auth
-  - FirebaseUI/Google (4.0.0):
-    - FirebaseUI/Auth
-    - GoogleSignIn (~> 4.0)
-  - FirebaseUI/Phone (4.0.0):
-    - FirebaseUI/Auth
-  - FirebaseUI/Storage (4.0.0):
-    - Firebase/Storage
-    - SDWebImage (~> 4.0)
-  - FirebaseUI/Twitter (4.0.0):
-    - FirebaseUI/Auth
-    - TwitterKit (~> 2.4)
-  - GoogleSignIn (4.0.2):
-    - GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)
-    - GoogleToolboxForMac/NSString+URLArguments (~> 2.1)
-    - GTMOAuth2 (~> 1.0)
-    - GTMSessionFetcher/Core (~> 1.1)
   - GoogleToolboxForMac/DebugUtils (2.1.1):
     - GoogleToolboxForMac/Defines (= 2.1.1)
   - GoogleToolboxForMac/Defines (2.1.1)
@@ -81,13 +37,7 @@ PODS:
     - GoogleToolboxForMac/Defines (= 2.1.1)
     - GoogleToolboxForMac/NSString+URLArguments (= 2.1.1)
   - GoogleToolboxForMac/NSString+URLArguments (2.1.1)
-  - GTMOAuth2 (1.1.4):
-    - GTMSessionFetcher (~> 1.1)
-  - GTMSessionFetcher (1.1.9):
-    - GTMSessionFetcher/Full (= 1.1.9)
   - GTMSessionFetcher/Core (1.1.9)
-  - GTMSessionFetcher/Full (1.1.9):
-    - GTMSessionFetcher/Core (= 1.1.9)
   - JSQMessagesViewController (7.3.4):
     - JSQSystemSoundPlayer (~> 2.0.1)
   - JSQSystemSoundPlayer (2.0.1)
@@ -99,33 +49,17 @@ PODS:
   - ReactiveCocoa/no-arc (2.5)
   - ReactiveCocoa/UI (2.5):
     - ReactiveCocoa/Core
-  - SDWebImage (4.0.0):
-    - SDWebImage/Core (= 4.0.0)
-  - SDWebImage/Core (4.0.0)
-  - TwitterCore (2.8.0):
-    - Fabric
-  - TwitterKit (2.8.1):
-    - TwitterCore (>= 2.8)
 
 DEPENDENCIES:
   - Firebase/Auth
   - Firebase/Core
   - Firebase/Database
   - Firebase/Storage
-  - FirebaseUI (from `https://raw.githubusercontent.com/firebase/FirebaseUI-iOS/master/FirebaseUI.podspec`)
   - JSQMessagesViewController
   - Masonry
   - ReactiveCocoa (~> 2.5)
 
-EXTERNAL SOURCES:
-  FirebaseUI:
-    :podspec: https://raw.githubusercontent.com/firebase/FirebaseUI-iOS/master/FirebaseUI.podspec
-
 SPEC CHECKSUMS:
-  Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
-  Fabric: 5911403591946b8228ab1c51d98f1d7137e863c6
-  FBSDKCoreKit: d7829f5a69901cd7296105328e4c3c3fc7da6518
-  FBSDKLoginKit: 6b92bd65f319d669d2b0730e49db495ef1660566
   Firebase: 2b1cdfba1cda8589f32904a697cc753322bff9d8
   FirebaseAnalytics: 0d1b7d81d5021155be37702a94ba1ec16d45365d
   FirebaseAuth: cc8a1824170adbd351edb7f994490a3fb5c18be6
@@ -133,19 +67,13 @@ SPEC CHECKSUMS:
   FirebaseDatabase: 05c96d7b43a7368dc91c07791adb49683e1738d1
   FirebaseInstanceID: 2d0518b1378fe9d685ef40cbdd63d2fdc1125339
   FirebaseStorage: a5c55b23741a49a72af8f30f95b3bb5ddbeda12d
-  FirebaseUI: ada0e3f16365107f8702bc6ebc85d0571a8d78ea
-  GoogleSignIn: d7ad83f13480e1f30453471d00d19b5293ac46af
   GoogleToolboxForMac: 8e329f1b599f2512c6b10676d45736bcc2cbbeb0
-  GTMOAuth2: 7fc9c10f5c745f4d9850419ea88889fe3baa6b7d
   GTMSessionFetcher: 5c046c76a1f859bc9c187e918f18e4fc7bb57b5e
   JSQMessagesViewController: 39fed975e3c9f8eba7292071e29eeb541d105e66
   JSQSystemSoundPlayer: c5850e77a4363ffd374cd851154b9af93264ed8d
   Masonry: 7c429b56da9d4ee0bbb3ed77a5ea710d6a5df39e
   ReactiveCocoa: e2db045570aa97c695e7aa97c2bcab222ae51f4a
-  SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
-  TwitterCore: e959987be23c767004d29eb7fab8d85d8585a2e5
-  TwitterKit: 3b6044a7320340326a4098f3e37aa1dbaeb94942
 
-PODFILE CHECKSUM: a417fe820321937b0e14edb64a406e653f94a893
+PODFILE CHECKSUM: 0cde2cff6788201ba842a9217eeb74c018d57bd5
 
 COCOAPODS: 1.2.1.beta.1

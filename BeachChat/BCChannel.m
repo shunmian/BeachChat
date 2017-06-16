@@ -112,7 +112,7 @@
 
     
     FIRDataSnapshot *lastMessageSnapshot = [snapshot childSnapshotForPath:@"lastMessage"];
-    BCMessage *lastMessage = [BCMessage convertedToMessageFromJSON:lastMessageSnapshot];
+    BCMessage *lastMessage = [BCMessage convertedToTextMessageFromJSON:lastMessageSnapshot];
 
     
     BCChannel *channel = [[BCChannel alloc] initWithCreator:creator

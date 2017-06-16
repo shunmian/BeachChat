@@ -211,7 +211,7 @@
             [[BCRef.root.section(BCRefMessagesSection).user(other).child(message.channelKey).section(BCRefMessagesSection) childByAutoId] setValue:[message json]];
             
             [ref observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-                BCMessage *returnMessage = [BCMessage convertedToMessageFromJSON:snapshot];
+                BCMessage *returnMessage = [BCMessage convertedToTextMessageFromJSON:snapshot];
                 [BCRef.root.section(BCRefChannelsSection).user(returnMessage.author).child(returnMessage.channelKey).child(@"lastMessage") setValue:[returnMessage json]];
                 [BCRef.root.section(BCRefChannelsSection).user(returnMessage.author).child(returnMessage.channelKey).child(@"updatedDate") setValue:returnMessage.createdDate.description];
                 

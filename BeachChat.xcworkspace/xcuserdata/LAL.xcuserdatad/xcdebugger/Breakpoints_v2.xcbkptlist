@@ -371,11 +371,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeachChat/BCChannelViewController.m"
-            timestampString = "519273963.806836"
+            timestampString = "519294001.904098"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "129"
-            endingLineNumber = "129"
+            startingLineNumber = "142"
+            endingLineNumber = "142"
             landmarkName = "-messagesRef"
             landmarkType = "7">
          </BreakpointContent>
@@ -387,11 +387,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeachChat/BCChannelViewController.m"
-            timestampString = "519273963.806836"
+            timestampString = "519294001.904098"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "136"
-            endingLineNumber = "136"
+            startingLineNumber = "149"
+            endingLineNumber = "149"
             landmarkName = "-selfTypingRef"
             landmarkType = "7">
          </BreakpointContent>
@@ -403,12 +403,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeachChat/BCChannelViewController.m"
-            timestampString = "519273963.806836"
+            timestampString = "519294001.904098"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "143"
-            endingLineNumber = "143"
+            startingLineNumber = "156"
+            endingLineNumber = "156"
             landmarkName = "-otherTypingRef"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BeachChat/BCChannelViewController.m"
+            timestampString = "519298648.189562"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "468"
+            endingLineNumber = "468"
+            landmarkName = "-fetchImageDataAtURL:forMediaItem:clearsPhotoMessgeMapOnSuccessForKey:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

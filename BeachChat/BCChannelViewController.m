@@ -8,15 +8,15 @@
 
 #import <Photos/Photos.h>
 #import "BCChannelViewController.h"
-#import "JSQMessagesBubbleImage.h"
-#import "JSQMessagesBubbleImageFactory.h"
-#import "JSQMessage.h"
-#import "UIColor+JSQMessages.h"
-#import "JSQSystemSoundPlayer.h"
-#import "JSQSystemSoundPlayer+JSQMessages.h"
+#import <JSQMessagesBubbleImage.h>
+#import <JSQMessagesBubbleImageFactory.h>
+#import <JSQMessage.h>
+#import <UIColor+JSQMessages.h>
+#import <JSQSystemSoundPlayer.h>
+#import <JSQSystemSoundPlayer+JSQMessages.h>
+#import <JSQPhotoMediaItem.h>
 
-
-@interface BCChannelViewController ()<UITextViewDelegate>
+@interface BCChannelViewController ()<UITextViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 //Static Entry Data
 @property(nonatomic, strong) BCChannel *channel;
@@ -36,7 +36,9 @@
 
 //Images
 @property(nonatomic, strong) FIRStorageReference *storageImageRef;
-
+@property(nonatomic, strong) NSString *imageURLNotSetKey;
+@property(nonatomic, strong) NSMutableDictionary *PhotoMessageMap;
+@property(nonatomic, assign) FIRDatabaseHandle updatdMessageRefHandle;
 
 //Views
 @property(nonatomic, strong) JSQMessagesBubbleImage *outgointBubbleImageView;
@@ -79,7 +81,6 @@
                      date:(NSDate *)date{
     NSLog(@"return pressed");
     
-    
     if(text.length == 0){
         [self.view endEditing:YES];
     }else{
@@ -99,9 +100,18 @@
         [self finishSendingMessage];
         [self scrollToBottomAnimated:YES];
         [JSQSystemSoundPlayer jsq_playMessageSentSound];
-
     }
-    
+}
+
+-(void)didPressAccessoryButton:(UIButton *)sender{
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]){
+        picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+    }else{
+        picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    }
+    [self presentViewController:picker animated:YES completion:nil];
 }
 
 #pragma mark - 1_Navigation
@@ -152,7 +162,14 @@
     if(!_storageImageRef){
         _storageImageRef = BCRef.storage;
     }
+    return _storageImageRef;
+}
 
+-(NSString *)imageURLNotSetKey{
+    if(!_imageURLNotSetKey){
+        _imageURLNotSetKey = @"NOTSET";
+    }
+    return _imageURLNotSetKey;
 }
 
 -(JSQMessagesBubbleImage *)outgointBubbleImageView{
@@ -232,7 +249,7 @@
     return cell;
 }
 
-#pragma mark - UITextView Delegate
+#pragma mark - UITextViewDelegate
 
 -(void)textViewDidBeginEditing:(UITextView *)textView{
     NSLog(@"%@",NSStringFromSelector(_cmd));
@@ -252,12 +269,82 @@
     [self.selfTypingRef setValue:@(NO)];
 }
 
+#pragma mark - UIImagePickerControllerDelegate, UINavigationControllerDelegate
+
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info{
+    
+    [picker dismissViewControllerAnimated:YES completion:nil];
+    
+    NSURL *photoReferenceURL = info[UIImagePickerControllerReferenceURL];
+    
+    if(photoReferenceURL){
+        PHFetchResult *assests = [PHAsset fetchAssetsWithALAssetURLs:@[photoReferenceURL] options:nil];
+        PHAsset *asset = [assests firstObject];
+        
+        NSDictionary *keyPair = [self sendPhotoMessage];
+        NSString *fromKey = keyPair[@"fromKey"];
+        NSString *toKey = keyPair[@"toKey"];
+        
+        [asset requestContentEditingInputWithOptions:nil completionHandler:^(PHContentEditingInput * _Nullable contentEditingInput, NSDictionary * _Nonnull info) {
+            NSURL *imageFileURL = contentEditingInput.fullSizeImageURL;
+            NSString *path = [NSString stringWithFormat:@"%@",self.channel.validKey];
+            
+            NSString *timeIntervalKey = [NSString stringWithFormat:@"%f",[NSDate timeIntervalSinceReferenceDate]*1000];
+            
+            FIRStorageReference *destRef = [self.storageImageRef child:path];
+            NSLog(@"timeinterval key: %@",timeIntervalKey);
+            
+            [[destRef child:timeIntervalKey] putFile:imageFileURL metadata:nil completion:^(FIRStorageMetadata * _Nullable metadata, NSError * _Nullable error) {
+                if(!error){
+                    [self setUploadFinishedImageURL:[self.storageImageRef child:metadata.path].description forPhotoMessageWithKey:fromKey forUser:self.chatManager.bcUser];
+                    
+                    [self setUploadFinishedImageURL:[self.storageImageRef child:metadata.path].description forPhotoMessageWithKey:toKey forUser:[self.channel otherOf:self.chatManager.bcUser]];
+                    
+                }else{
+                    NSLog(@"Error uploading photo: %@",error.localizedDescription);
+                }
+            }];
+        }];
+    }else{
+        UIImage *image = info[UIImagePickerControllerOriginalImage];
+        NSDictionary *keyPair = [self sendPhotoMessage];
+        NSString *fromKey = keyPair[@"fromKey"];
+        NSString *toKey = keyPair[@"toKey"];
+        
+        NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
+        NSString *path = [NSString stringWithFormat:@"%@",self.channel.validKey];
+        FIRStorageMetadata *metadata = [[FIRStorageMetadata alloc] init];
+        metadata.contentType = @"imag/jpeg";
+        [[self.storageImageRef child:path] putData:imageData metadata:metadata completion:^(FIRStorageMetadata * _Nullable metadata, NSError * _Nullable error) {
+            if(!error){
+                [self setUploadFinishedImageURL:[self.storageImageRef child:metadata.path].description forPhotoMessageWithKey:fromKey forUser:self.chatManager.bcUser];
+                
+                [self setUploadFinishedImageURL:[self.storageImageRef child:metadata.path].description forPhotoMessageWithKey:toKey forUser:[self.channel otherOf:self.chatManager.bcUser]];
+            }else{
+                NSLog(@"Error uploading photo: %@",error.localizedDescription);
+            }
+        }];
+    }
+}
+
+-(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker{
+    [picker dismissViewControllerAnimated:YES completion:nil];
+}
+
 #pragma mark - RACSignal
 
 -(RACSignal *)createMessagesSignal{
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         [self.messagesRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-            NSMutableArray *messages = [[BCMessage convertedToMessagesFromJSONs:snapshot] mutableCopy];
+            NSMutableArray *messages = [[BCMessage convertedToTextAndPhotoMessagesFromJSONs:snapshot] mutableCopy];
+            for (BCMessage *message in messages){
+                if(message.mediaItemKey){
+                    message.mediaItem = [[JSQPhotoMediaItem alloc] initWithMaskAsOutgoing:[message.author isEqual:self.chatManager.bcUser]];
+                    if([message.mediaItemKey hasPrefix:@"gs://"]){
+                        [self fetchImageDataAtURL:message.mediaItemKey forMediaItem:message.mediaItem clearsPhotoMessgeMapOnSuccessForKey:nil];
+                    }
+                }
+            }
             [subscriber sendNext:messages];
         }];
         return [RACDisposable disposableWithBlock:^{
@@ -322,11 +409,15 @@
 
 
 -(JSQMessage *)convertFromBCMessageToJSQMessageData:(BCMessage *)bcMessage{
-    
-    JSQMessage *jsqMessage = [[JSQMessage alloc] initWithSenderId:bcMessage.author.identity
+    JSQMessage *jsqMessage;
+    if(!bcMessage.mediaItemKey){
+        jsqMessage = [[JSQMessage alloc] initWithSenderId:bcMessage.author.identity
                                                 senderDisplayName:bcMessage.author.displayName
                                                              date:bcMessage.createdDate
                                                              text:bcMessage.body];
+    }else{
+        jsqMessage = [[JSQMessage alloc] initWithSenderId:bcMessage.author.identity senderDisplayName:bcMessage.author.displayName date:bcMessage.createdDate media:bcMessage.mediaItem];
+    }
     return jsqMessage;
 
 }
@@ -337,6 +428,66 @@
 
 -(void)appWillResignActive{
     [self.selfTypingRef setValue:@(NO)];
+}
+
+-(NSDictionary *)sendPhotoMessage{
+    
+    BCMessage *photoMessage = [[BCMessage alloc] initWithAuthor:self.chatManager.bcUser channelKey:self.channel.validKey mediatItemKey:self.imageURLNotSetKey createdTimeStamp:0];
+    
+    FIRDatabaseReference *photoMessageFromRef = [self.messagesRef childByAutoId];
+    [photoMessageFromRef setValue:[photoMessage photoJson]];
+    FIRDatabaseReference *photoMessageToRef = [BCRef.root.section(BCRefMessagesSection).user([self.channel otherOf:self.chatManager.bcUser]).child(self.channel.validKey).section(BCRefMessagesSection) childByAutoId];
+    [photoMessageToRef setValue:[photoMessage photoJson]];
+    
+    [JSQSystemSoundPlayer jsq_playMessageSentSound];
+    [self finishSendingMessage];
+    return @{@"fromKey":photoMessageFromRef.key,
+             @"toKey":photoMessageToRef.key};
+}
+
+-(void)setUploadFinishedImageURL:(NSString *)url forPhotoMessageWithKey:(NSString *)key forUser:(BCUser *)user{
+    
+    FIRDatabaseReference *photoMessageRef = [BCRef.root.section(BCRefMessagesSection).user(user).child(self.channel.validKey).section(BCRefMessagesSection) child:key];
+    [photoMessageRef updateChildValues:@{@"mediaItemKey":url}];
+}
+
+-(void)addPhotoMessgeWithID:(NSString *)ID key:(NSString *)key mediaItem:(JSQPhotoMediaItem *)mediaItem{
+    BCMessage *message = [[BCMessage alloc] initWithAuthor:self.chatManager.bcUser channelKey:self.channel.validKey mediatItem:mediaItem];
+    
+    [self.messages addObject:message];
+    if(mediaItem.image == nil){
+        self.PhotoMessageMap[key] = mediaItem;
+    }
+    [self.collectionView reloadData];
+}
+
+-(void)fetchImageDataAtURL:(NSString *)url
+              forMediaItem:(JSQPhotoMediaItem *)mediaItem
+clearsPhotoMessgeMapOnSuccessForKey:(NSString *)key{
+    FIRStorageReference *ref = [[FIRStorage storage] referenceForURL:url];
+    [ref dataWithMaxSize:INT64_MAX completion:^(NSData * _Nullable data, NSError * _Nullable error) {
+        if(error){
+            NSLog(@"Error downloading image data: %@",error.description);
+            return;
+        }
+        
+        [ref metadataWithCompletion:^(FIRStorageMetadata * _Nullable metadata, NSError * _Nullable error) {
+            if(error){
+                NSLog(@"Error downloading metadata: %@",error.description);
+            }
+            
+            if([metadata.contentType isEqualToString: @"image/gif"]){
+                mediaItem.image = [UIImage imageWithData:data];
+            }else{
+                mediaItem.image = [UIImage imageWithData:data];
+            }
+            [self.collectionView reloadData];
+            
+            if(!key)return;
+            [self.PhotoMessageMap removeObjectForKey:key];
+        }];
+        
+    }];
 }
 
 @end

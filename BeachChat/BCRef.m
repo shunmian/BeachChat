@@ -17,7 +17,7 @@
         root = [[FIRDatabase database] reference];
     }
     if(!storage){
-        storage = [[FIRStorage storage] referenceForURL:kAppURL];
+        storage = [[FIRStorage storageForApp:[FIRApp defaultApp]] reference];
     }
 }
 
