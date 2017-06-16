@@ -7,35 +7,58 @@
 //
 
 #import "BCChatManager.h"
-
+#import "FIRDatabaseReference+Path.h"
 
 @interface BCChatManager()
-@property (nonatomic, strong,readwrite) BCUser *bcUser;
+@property (nonatomic, strong, readwrite) BCUser *bcUser;
+
+#pragma mark - Ref
+@property (nonatomic, strong, readwrite) FIRDatabaseReference *usersSectionRef;
+
+@property (nonatomic, strong, readwrite) FIRDatabaseReference *channelsSectionRef;
+@property (nonatomic, strong, readwrite) FIRDatabaseReference *channelsRef;
+
+@property (nonatomic, strong, readwrite) FIRDatabaseReference *messagesSectionRef;
+@property (nonatomic, strong, readwrite) FIRDatabaseReference *messagesRef;
+
+@property (nonatomic, strong, readwrite) FIRDatabaseReference *friendsSectionRef;
+@property (nonatomic, strong, readwrite) FIRDatabaseReference *friendsRef;
+
+@property (nonatomic, strong, readwrite) FIRDatabaseReference *friendRequestsSectionRef;
+@property (nonatomic, strong, readwrite) FIRDatabaseReference *friendRequestsRef;
+
+
+
+
 @end
 
 @implementation BCChatManager
+
+#pragma mark - Life Cycle
+
+
+-(void)setUpWithEntryData:(id)data{
+    NSAssert([data isKindOfClass:[FIRUser class]], @"data must be FIRUser class");
+    self.firUser = (FIRUser *)data;
+}
+
+-(void)setUpSignals{
+    RAC(self,channels) = [self createChannelsSignal];
+    RAC(self,users) = [self createUsersSignal];
+    RAC(self,friends) = [self createFriendsSignal];
+    RAC(self,friendRequests) = [self createFriendRequestsSignal];
+}
 
 +(instancetype)sharedManager{
     static BCChatManager *_sharedManager = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _sharedManager = [[BCChatManager alloc] init];
-        
-        [_sharedManager getUsersWithCompletion:^(NSArray *users) {
-            _sharedManager.users = [users mutableCopy];
-        }];
-        
-        [_sharedManager getFriendsWithCompletion:^(NSArray *friends) {
-            _sharedManager.friends = [friends mutableCopy];
-        }];
-        
-        [_sharedManager bcUser];
-//        [_sharedManager getFriendRequestsWithCompletion:^(NSArray *friendRequests) {
-//            _sharedManager.friendRequests = [friendRequests mutableCopy];
-//        }];
     });
     return _sharedManager;
 }
+
+#pragma mark - 0 level setter & getter
 
 -(BCUser *)bcUser{
     if(!_bcUser){
@@ -44,307 +67,221 @@
     return _bcUser;
 }
 
--(FIRDatabaseReference *)channelRef{
-    if(!_channelRef){
-        _channelRef = [[[[FIRDatabase database] reference] child:@"channels"] child:self.bcUser.validKey];
+-(NSMutableArray<BCChannel *> *)channels{
+    if(!_channels){
+        _channels = [NSMutableArray new];
     }
-    return _channelRef;
+    return _channels;
 }
 
--(FIRDatabaseReference *)userRef{
-    if(!_userRef){
-        _userRef = [[[FIRDatabase database] reference] child:@"users"];
+
+#pragma mark - other setter & getter
+
+-(FIRDatabaseReference *)usersSectionRef{
+    if(!_usersSectionRef){
+        _usersSectionRef = BCRef.root.section(BCRefUsersSection);
     }
-    return _userRef;
+    return _usersSectionRef;
 }
 
--(FIRDatabaseReference *)messageRef{
-    if(!_messageRef){
-        _messageRef = [[[FIRDatabase database] reference] child:@"messages"];
+-(FIRDatabaseReference *)channelsSectionRef{
+    if(!_channelsSectionRef){
+        _channelsSectionRef = BCRef.root.section(BCRefChannelsSection);
     }
-    return _messageRef;
+    return _channelsSectionRef;
 }
 
--(FIRDatabaseReference *)friendRef{
-    if(!_friendRef){
-        _friendRef = [[[[FIRDatabase database] reference] child:@"friends"] child: _bcUser.validKey];
+-(FIRDatabaseReference *)channelsRef{
+    if(!_channelsRef){
+        _channelsRef = BCRef.root.section(BCRefChannelsSection).user(self.bcUser);
     }
-    return _friendRef;
+    return _channelsRef;
 }
 
--(FIRDatabaseReference *)friendRequestRef{
-    if(!_friendRequestRef){
-        _friendRequestRef = [[[[FIRDatabase database] reference] child:@"friendRequests"] child:self.bcUser.validKey];
+-(FIRDatabaseReference *)messagesSectionRef{
+    if(!_messagesSectionRef){
+        _messagesSectionRef = BCRef.root.section(BCRefMessagesSection);
     }
-    return _friendRequestRef;
+    return _messagesSectionRef;
 }
 
--(FIRDatabaseReference *)timeRef{
-    if(!_timeRef){
-        _timeRef = [[[FIRDatabase database] reference] child:@"time"];
+-(FIRDatabaseReference *)messagesRef{
+    if(!_messagesRef){
+        _messagesRef = BCRef.root.section(BCRefMessagesSection).user(self.bcUser);
     }
-    return _timeRef;
+    return _messagesRef;
 }
+
+-(FIRDatabaseReference *)friendsSectionRef{
+    if(!_friendsSectionRef){
+        _friendsSectionRef = BCRef.root.section(BCRefFriendsSection);
+    }
+    return _friendsSectionRef;
+}
+
+-(FIRDatabaseReference *)friendsRef{
+    if(!_friendsRef){
+        _friendsRef = BCRef.root.section(BCRefFriendsSection).user(self.bcUser);
+    }
+    return _friendsRef;
+}
+
+-(FIRDatabaseReference *)friendRequestsSectionRef{
+    if(!_friendRequestsSectionRef){
+        _friendRequestsSectionRef = BCRef.root.section(BCRefFriendRequestsSection);
+    }
+    return _friendRequestsSectionRef;
+}
+
+-(FIRDatabaseReference*)friendRequestsRef{
+    if(!_friendRequestsRef){
+        _friendRequestsRef = BCRef.root.section(BCRefFriendRequestsSection).user(self.bcUser);
+    }
+    return _friendRequestsRef;
+}
+
 
 #pragma mark - channels
-/*
--(void)observeChannelsWithEventType:(FIRDataEventType)eventType completion:(observeCompletion)completion{
-    [self.channelRef observeEventType:eventType withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-        switch (eventType) {
-            case FIRDataEventTypeChildAdded:{
-                NSDictionary *channelDict = snapshot.value;
-                NSString *identity = channelDict[@"identity"];
-                NSString *displayName = channelDict[@"displayName"];
-                BCChannel *channelAdded = [[BCChannel alloc] initWithIdentity:identity andDisplayName:displayName];
-                [self.channels addObject:channelAdded];
-                break;
-            }
-            default:
-                break;
-        }
-        completion(self.channels);
+
+-(RACSignal *)createChannelsSignal{
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        [self.channelsRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+            NSMutableArray *channels = [[BCChannel convertedToChannelsFromJSONs:snapshot] mutableCopy];
+            [subscriber sendNext:channels];
+        }];
+        return [RACDisposable disposableWithBlock:^{
+            NSLog(@"%@ disposed",NSStringFromSelector(_cmd));
+        }];
     }];
 }
- */
 
--(void)createChannel:(BCChannel *)channel{
-    FIRDatabaseReference *addedChannelRef = [self.channelRef childByAutoId];
-    [addedChannelRef setValue:[channel json]];
+-(void)createChannel:(BCChannel *)channel forUser:(BCUser *)user{
+    [BCRef.root.section(BCRefChannelsSection).user(user).child(channel.validKey) setValue:[channel json]];
 }
 
 
 #pragma mark - users
 
--(void)observeUsersWithEventType:(FIRDataEventType)eventType completion:(observeCompletion)completion{
-    [self.userRef observeEventType:eventType withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-        switch (eventType) {
-            case FIRDataEventTypeChildAdded:{
-                NSDictionary *userDict = snapshot.value;
-                NSString *identity = userDict[@"identity"];
-                NSString *displayName = userDict[@"displayName"];
-                BCUser *userAdded = [[BCUser alloc] initWithIdentity:identity andDisplayName:displayName];
-                [self.users addObject:userAdded];
-                break;
-            }
-            default:
-                break;
-        }
-        completion(self.users);
+-(RACSignal *)createUsersSignal{
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        [self.usersSectionRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+            NSMutableArray *users = [[BCUser convertedToUserFromJSON:snapshot] mutableCopy];
+            [subscriber sendNext:users];
+        }];
+        return [RACDisposable disposableWithBlock:^{
+            NSLog(@"%@ disposed",NSStringFromSelector(_cmd));
+        }];
     }];
 }
 
 -(void)createUser:(BCUser *)user{
-    NSLog(@"user.identiy:%@",user.identity);
-    FIRDatabaseReference *addedUserRef = [self.userRef child:user.validKey];
-    [addedUserRef setValue:[user json]];
+    [self.usersSectionRef.child(user.validKey) setValue:[user json]];
 }
 
--(void)getUsersWithCompletion:(observeCompletion)completion{
-    NSMutableArray *users = [NSMutableArray array];
-    [self.userRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-        for(FIRDataSnapshot *item in snapshot.children.allObjects){
-            NSDictionary *itemDict = item.value;
-            BCUser *user = [[BCUser alloc] initWithIdentity:itemDict[@"identity"] andDisplayName:itemDict[@"displayName"]];
-            [users addObject:user];
-        }
-        completion([NSArray arrayWithArray:users]);
-    }];
-}
-
--(void)getUserWithIdentity:(NSString *)identity withCompletion:(void(^)(BCUser *user, NSError *error))completion{
-    FIRDatabaseReference *ref = [self.userRef child:[BCUser validKeyFromIdentity:identity]];
+-(void)getUserWithIdentity:(NSString *)identity withCompletion:(void(^)(BCUser *user))completion{
+    FIRDatabaseReference *ref = self.usersSectionRef.child(identity);
     [ref observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-        if(snapshot.children.allObjects.count == 0){
-            NSError *error = [NSError errorWithDomain:nil code:0 userInfo:nil];
-            completion(nil,error);
+        if([snapshot.value isKindOfClass:[NSNull class]]){
+            completion(nil);
         }else{
-            NSDictionary *userDict = snapshot.value;
-            BCUser *user = [[BCUser alloc] initWithIdentity:identity andDisplayName:userDict[@"displayName"]];
-            completion(user,nil);
+            BCUser *user = [BCUser convertedToUserFromJSON:snapshot];
+            completion(user);
         }
     }];
 }
 
 #pragma mark - messages
 
--(void)observeMessagesWithEventType:(FIRDataEventType)eventType completion:(observeCompletion)completion{
-    [self.messageRef observeEventType:eventType withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-        switch (eventType) {
-            case FIRDataEventTypeChildAdded:{
-                NSDictionary *messageDict = snapshot.value;
-                NSString *identity = messageDict[@"identity"];
-                NSString *displayName = messageDict[@"displayName"];
-                BCUser *userAdded = [[BCUser alloc] initWithIdentity:identity andDisplayName:displayName];
-                [self.users addObject:userAdded];
-                break;
-            }
-            default:
-                break;
-        }
-        completion(self.users);
+-(RACSignal *)createMessagesSignal{
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        [self.messagesRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+            NSMutableArray *messagess = [[BCUser convertedToUsersFromJSONs:snapshot] mutableCopy];
+            [subscriber sendNext:messagess];
+        }];
+        return [RACDisposable disposableWithBlock:^{
+            NSLog(@"%@ disposed",NSStringFromSelector(_cmd));
+        }];
     }];
 }
 
--(void)createMessage:(BCMessage *)message{
-    FIRDatabaseReference *addedMessageRef = [self.messageRef childByAutoId];
-    [addedMessageRef setValue:[message json]];
+-(void)createMessage:(BCMessage *)message inChannel:(BCChannel *)channel withCompletion:(void(^)(BCMessage *, NSError *))completion{
+    [[self.messagesRef.child(message.channelKey).section(BCRefMessagesSection) childByAutoId] setValue:[message json] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref) {
+        if(!error){
+            BCUser *other = [channel otherOf:self.bcUser];
+            [[BCRef.root.section(BCRefMessagesSection).user(other).child(message.channelKey).section(BCRefMessagesSection) childByAutoId] setValue:[message json]];
+            
+            [ref observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+                BCMessage *returnMessage = [BCMessage convertedToMessageFromJSON:snapshot];
+                [BCRef.root.section(BCRefChannelsSection).user(returnMessage.author).child(returnMessage.channelKey).child(@"lastMessage") setValue:[returnMessage json]];
+                [BCRef.root.section(BCRefChannelsSection).user(returnMessage.author).child(returnMessage.channelKey).child(@"updatedDate") setValue:returnMessage.createdDate.description];
+                
+                [BCRef.root.section(BCRefChannelsSection).user(other).child(message.channelKey) observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+                    if([snapshot.value isMemberOfClass:[NSNull class]]){
+                        [self createChannel:channel forUser:other];
+                    }else{
+                        
+                    }
+                    [BCRef.root.section(BCRefChannelsSection).user(other).child(message.channelKey).child(@"lastMessage") setValue:[returnMessage json]];
+                    
+                    [BCRef.root.section(BCRefChannelsSection).user(other).child(returnMessage.channelKey).child(@"updatedDate") setValue:returnMessage.createdDate.description];
+                }];
+                completion(returnMessage,nil);
+            }];
+        }else{
+            completion(nil,error);
+        }
+    }];
 }
 
 #pragma mark - friends
 
--(void)observeFriendsWithEventType:(FIRDataEventType)eventType completion:(observeCompletion)completion{
-    [self.friendRef observeEventType:eventType withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-        switch (eventType) {
-            case FIRDataEventTypeChildAdded:{
-                NSDictionary *messageDict = snapshot.value;
-                NSString *identity = messageDict[@"identity"];
-                NSString *displayName = messageDict[@"displayName"];
-                BCUser *userAdded = [[BCUser alloc] initWithIdentity:identity andDisplayName:displayName];
-                [self.friends addObject:userAdded];
-                break;
-            }
-            default:
-                break;
-        }
-        completion(self.friends);
+-(RACSignal *)createFriendsSignal{
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        [self.friendsRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+            NSMutableArray *friends = [[BCUser convertedToUsersFromJSONs:snapshot] mutableCopy];
+            [subscriber sendNext:friends];
+        }];
+        return [RACDisposable disposableWithBlock:^{
+            NSLog(@"%@ disposed",NSStringFromSelector(_cmd));
+        }];
     }];
 }
 
 -(void)addFriend:(BCUser *)user{
-    FIRDatabaseReference *addedFriendRef = [self.friendRef childByAutoId];
-    [addedFriendRef setValue:[user json]];
-}
-
--(void)getFriendsWithCompletion:(observeCompletion)completion{
-    NSMutableArray *friends = [NSMutableArray array];
-    [self.userRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-        for(FIRDataSnapshot *item in snapshot.children.allObjects){
-            NSDictionary *itemDict = item.value;
-            BCUser *user = [[BCUser alloc] initWithIdentity:itemDict[@"identity"] andDisplayName:itemDict[@"displayName"]];
-            [friends addObject:user];
-        }
-        completion([NSArray arrayWithArray:friends]);
-    }];
+    [self.friendsRef.child(user.validKey) setValue:[user json]];
 }
 
 #pragma mark - friendsRequest
--(void)observeFriendsRequestWithEventType:(FIRDataEventType)eventType completion:(observeCompletion)completion{
-    [self.friendRequestRef observeEventType:eventType withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-        switch (eventType) {
-            case FIRDataEventTypeChildAdded:{
-                NSDictionary *friendRequestDict = snapshot.value;
-                NSDictionary *fromDict = friendRequestDict[@"from"];
-                NSDictionary *toDict = friendRequestDict[@"to"];
-                NSNumber *state = friendRequestDict[@"state"];
-                
-                BCUser *from = [[BCUser alloc] initWithIdentity:fromDict[@"identity"] andDisplayName:fromDict[@"displayName"]];
-                
-                BCUser *to = [[BCUser alloc] initWithIdentity:toDict[@"identity"] andDisplayName:toDict[@"displayName"]];
-                
-                BCFriendRequest *friendRequest = [[BCFriendRequest alloc] initWithFrom:from to:to state:state.integerValue];
-                [self.friendRequests addObject:friendRequest];
-                break;
-            }
-            default:
-                break;
-        }
-        completion(self.friendRequests);
+
+-(RACSignal *)createFriendRequestsSignal{
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        [self.friendsRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+            NSMutableArray *friendRequests = [[BCFriendRequest convertedToFriendRequestsFromJSONs:snapshot receiver:self.bcUser] mutableCopy];
+            [subscriber sendNext:friendRequests];
+        }];
+        return [RACDisposable disposableWithBlock:^{
+            NSLog(@"%@ disposed",NSStringFromSelector(_cmd));
+        }];
     }];
 }
 
 -(void)addFriendRequestFrom:(BCUser *)from to:(BCUser *)to{
-    
     BCFriendRequest *friendRequest = [[BCFriendRequest alloc] initWithFrom:from to:to state:BCFriendRequestStateApplied];
-    FIRDatabaseReference *addedFriendRequestRef = [self.friendRequestRef child:friendRequest.validKey];
-    [addedFriendRequestRef setValue:[friendRequest json]];
-}
-
--(void)deleteFriendRequestFrom:(BCUser *)from to:(BCUser *)to{
-    BCFriendRequest *friendRequest = [[BCFriendRequest alloc] initWithFrom:from to:to];
-    FIRDatabaseReference *addedFriendRequestRef = [self.friendRequestRef child:friendRequest.validKey];
-    [addedFriendRequestRef setValue:nil];
+    [self addFriendRequest:friendRequest];
 }
 
 -(void)addFriendRequest:(BCFriendRequest *)friendRequest{
     friendRequest.state = BCFriendRequestStateApplied;
-    NSDictionary *json = [friendRequest json];
-    
-    FIRDatabaseReference *fromRef = [friendRequest fromRef];
-    [fromRef setValue:json];
-    
-    FIRDatabaseReference *toRef = [friendRequest toRef];
-    [toRef setValue:json];
+    [self.friendRequestsRef.child(friendRequest.validKey) setValue:[friendRequest json]];
+    [BCRef.root.section(BCRefFriendRequestsSection).user(friendRequest.to).child(friendRequest.validKey) setValue:[friendRequest json]];
 }
 
 -(void)acceptFriendRequest:(BCFriendRequest *)friendRequest{
-    FIRDatabaseReference *fromRef = [friendRequest fromRef];
-    NSMutableDictionary *fromJson = [[friendRequest json] mutableCopy];
-    [fromJson setValue:@(BCFriendRequestStateAccepted) forKey:@"state"];
-    [fromRef setValue:fromJson];
-    
-    FIRDatabaseReference *toRef = [friendRequest toRef];
-    NSMutableDictionary *toJson = [[friendRequest json] mutableCopy];
-    [toJson setValue:@(BCFriendRequestStateAccepted) forKey:@"state"];
-    [toRef setValue:toJson];
-    
+    BCUser *other = [friendRequest otherOf:self.bcUser];
+    [self.friendsRef.child(other.validKey) setValue:[other json]];
+    [BCRef.root.section(BCRefFriendsSection).user(other).child(self.bcUser.validKey) setValue:[self.bcUser json]];
+    [self.friendRequestsRef.child(friendRequest.validKey) setValue:nil];
+    [BCRef.root.section(BCRefFriendRequestsSection).user(other).child(friendRequest.validKey) setValue:nil];
 }
-
-//-(void)getFriendRequestFrom:(BCUser *)from to:(BCUser *)to withCompletion:(void(^)(BCFriendRequest *,NSError *))completion{
-//    BCFriendRequest *friendRequest = [[BCFriendRequest alloc] initWithFrom:from to:to];
-//    NSString *path = [NSString stringWithFormat:@"%@/%@",from.validKey, friendRequest.validKey];
-//    FIRDatabaseReference *ref = [self.friendRef child:path];
-//    ref observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-//        if(!snapshot){
-//            NSError *error = [NSError errorWithDomain:nil code:0 userInfo:@{@"friednRequest",@"key not exist"}];
-//            completion(nil,error);
-//        }else{
-//            NSDictionary *requestDict = snapshot.value;
-//            BCUser *from = [[BCUser alloc] initWithIdentity:requestDict[@"to"][@"identity"] andDisplayName:requestDict[@"to"][@"displayName"]];
-//            BCUser *to = [BCUser alloc] initWithIdentity:requestDict[@"from"] andDisplayName:<#(NSString *)#>
-//                                                                                                                             ]
-//            completion()
-//        }
-//    }
-//
-//
-//}
-
-
-
-
--(void)getFriendRequestsWithCompletion:(observeCompletion)completion{
-    NSMutableArray *friendRequests = [NSMutableArray array];
-    [self.friendRequestRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-        for(FIRDataSnapshot *item in snapshot.children.allObjects){
-            NSDictionary *friendRequestDict = item.value;
-            NSDictionary *fromDict = friendRequestDict[@"from"];
-            NSDictionary *toDict = friendRequestDict[@"to"];
-            NSNumber *state = friendRequestDict[@"state"];
-            
-            BCUser *from = [[BCUser alloc] initWithIdentity:fromDict[@"identity"] andDisplayName:fromDict[@"displayName"]];
-            
-            BCUser *to = [[BCUser alloc] initWithIdentity:toDict[@"identity"] andDisplayName:toDict[@"displayName"]];
-            
-            BCFriendRequest *friendRequest = [[BCFriendRequest alloc] initWithFrom:from to:to state:state.integerValue];
-            
-            [friendRequests addObject:friendRequest];
-        }
-        completion([NSArray arrayWithArray:friendRequests]);
-    }];
-}
-
-
-//-(NSMutableArray *)getChannels{
-//    NSMutableArray *users = [NSMutableArray array];
-//    [self.userRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-//        for(FIRDataSnapshot *item in snapshot.children.allObjects){
-//            NSDictionary *itemDict = item.value;
-//            BCUser *user = [[BCUser alloc] initWithIdentity:itemDict[@"identity"] andDisplayName:itemDict[@"displayName"]];
-//            [users addObject:user];
-//        }
-//    }];
-//    return users;
-//}
-
 
 @end

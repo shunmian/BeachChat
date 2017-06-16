@@ -19,6 +19,7 @@
 @property (nonatomic, strong) RACSignal *userDisplayNameSignal;
 
 @property (nonatomic, strong) FIRDatabaseReference *friendRequestRef;
+@property (nonatomic, strong) FIRDatabaseReference *friendsRef;
 @property (nonatomic, strong) RACSignal *friendRequestStateSignal;
 
 //RACSignal related views
@@ -26,7 +27,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *sendFriendRequestBTN;
 @property (weak, nonatomic) IBOutlet UIButton *waitFriendRequestBTN;
 @property (weak, nonatomic) IBOutlet UIButton *friendRequestApprovedBTN;
-@property (weak, nonatomic) IBOutlet UIButton *beingSentFriendRequestBTN;
+@property (weak, nonatomic) IBOutlet UIButton *acceptFriendRequestBTN;
 
 @end
 
@@ -42,14 +43,14 @@
     [self.chatManager addFriendRequest:request];
 }
 
-- (IBAction)beingSentFriendRequestBTNPressed:(id)sender {
+- (IBAction)acceptFriendRequestBTNPressed:(id)sender {
     BCFriendRequest *request = [[BCFriendRequest alloc] initWithFrom:self.chatManager.bcUser to:self.user];
     
     [self.chatManager acceptFriendRequest:request];
 }
 
 - (IBAction)friendRequestApprovedTBNPressed:(id)sender {
-    FIRDatabaseReference *fromRef = [self.chatManager.channelRef child:[BCFriendRequest validKeyFrom:self.chatManager.bcUser to:self.user]];
+    FIRDatabaseReference *fromRef = [self.chatManager.channelsRef child:[BCFriendRequest validKeyFrom:self.chatManager.bcUser to:self.user]];
     
     [fromRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
         if([snapshot.value isKindOfClass:[NSNull class]]){
@@ -95,8 +96,7 @@
 
 -(FIRDatabaseReference *)userDisplayNameRef{
     if(!_userDisplayNameRef){
-        NSString *path = [NSString stringWithFormat:@"%@/%@",_user.validKey,@"displayName"];
-        _userDisplayNameRef = [self.chatManager.userRef child:path];
+        _userDisplayNameRef = self.chatManager.usersSectionRef.user(self.user).child(@"displayName");
     }
     return _userDisplayNameRef;
 }
@@ -104,12 +104,17 @@
 
 -(FIRDatabaseReference *)friendRequestRef{
     if(!_friendRequestRef){
-        NSString *path = [NSString stringWithFormat:@"%@",[BCFriendRequest validKeyFrom:self.chatManager.bcUser to:_user]];
-        _friendRequestRef = [self.chatManager.friendRequestRef child:path];
+        _friendRequestRef = self.chatManager.friendRequestsRef.child([BCFriendRequest validKeyFrom:self.chatManager.bcUser to:_user]);
     }
     return _friendRequestRef;
 }
 
+-(FIRDatabaseReference *)friendsRef{
+    if(!_friendsRef){
+        _friendsRef = self.chatManager.friendsRef;
+    }
+    return _friendsRef;
+}
 
 #pragma mark - RACSignal
 
@@ -127,13 +132,20 @@
 -(RACSignal *)createFriendRequestSignal{
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         [self.friendRequestRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-            if([snapshot.value isKindOfClass:[NSNull class]]){
-                BCFriendRequest *request = [[BCFriendRequest alloc] initWithFrom:self.chatManager.bcUser to:self.user];
-                [subscriber sendNext:request];
-            }else{
-                BCFriendRequest *request = [BCFriendRequest convertedFromJSON:snapshot];
-                [subscriber sendNext:request];
-            }
+            BCFriendRequest *request = [BCFriendRequest convertedToUserFromJSON:snapshot];
+            [subscriber sendNext:request];
+        }];
+        return [RACDisposable disposableWithBlock:^{
+            NSLog(@"%@ disposed",NSStringFromSelector(_cmd));
+        }];
+    }];
+}
+
+-(RACSignal *)createFriendSignal{
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        [self.friendsRef.child(self.user.validKey) observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+            BCUser *user = [BCUser convertedToUserFromJSON:snapshot];
+            [subscriber sendNext:user];
         }];
         return [RACDisposable disposableWithBlock:^{
             NSLog(@"%@ disposed",NSStringFromSelector(_cmd));
@@ -150,15 +162,16 @@
         self.displayNameLabel.text = x;
     }];
     
-    self.friendRequestStateSignal = [[self createFriendRequestSignal]
-                                     map:^NSNumber *(BCFriendRequest *request) {
-                                         BCFriendRequestState state = request.state;
-                                         if(state == BCFriendRequestStateApplied && [request isSender:self.user]){
-                                             return @(BCFriendRequestStateBeingApplied);
-                                         }else{
-                                             return @(state);
-                                         }
-                                     }];
+    RACSignal *friendRequstSignal = [self createFriendRequestSignal];
+    RACSignal *friendSignal = [self createFriendSignal];
+    
+    self.friendRequestStateSignal = [RACSignal combineLatest:@[friendSignal,friendRequstSignal] reduce:^id(BCUser *user,BCFriendRequest *friendRequest){
+        
+        if ([user isEqual:self.user]) return @(BCFriendRequestStateAccepted);
+        if (friendRequest.state == BCFriendRequestStateApplied && ![friendRequest.from isEqual:self.chatManager.bcUser])return @(BCFriendRequestStateBeingApplied);
+        return @(friendRequest.state);
+    }];
+    
     [self.friendRequestStateSignal subscribeNext:^(NSNumber *x) {
           NSInteger state = x.integerValue;
           switch (state) {
@@ -166,25 +179,25 @@
                   self.sendFriendRequestBTN.hidden = NO;
                   self.waitFriendRequestBTN.hidden = YES;
                   self.friendRequestApprovedBTN.hidden = YES;
-                  self.beingSentFriendRequestBTN.hidden = YES;
+                  self.acceptFriendRequestBTN.hidden = YES;
                   break;
               case BCFriendRequestStateApplied:
                   self.sendFriendRequestBTN.hidden = YES;
                   self.waitFriendRequestBTN.hidden = NO;
                   self.friendRequestApprovedBTN.hidden = YES;
-                  self.beingSentFriendRequestBTN.hidden = YES;
+                  self.acceptFriendRequestBTN.hidden = YES;
                   break;
               case BCFriendRequestStateAccepted:
                   self.sendFriendRequestBTN.hidden = YES;
                   self.waitFriendRequestBTN.hidden = YES;
                   self.friendRequestApprovedBTN.hidden = NO;
-                  self.beingSentFriendRequestBTN.hidden = YES;
+                  self.acceptFriendRequestBTN.hidden = YES;
                   break;
               case BCFriendRequestStateBeingApplied:
                   self.sendFriendRequestBTN.hidden = YES;
                   self.waitFriendRequestBTN.hidden = YES;
                   self.friendRequestApprovedBTN.hidden = YES;
-                  self.beingSentFriendRequestBTN.hidden = NO;
+                  self.acceptFriendRequestBTN.hidden = NO;
               default:
                   break;
           }
@@ -195,7 +208,7 @@
     self.sendFriendRequestBTN.hidden = YES;
     self.waitFriendRequestBTN.hidden = YES;
     self.friendRequestApprovedBTN.hidden = YES;
-    self.beingSentFriendRequestBTN.hidden = YES;
+    self.acceptFriendRequestBTN.hidden = YES;
 }
 
 #pragma mark - Public Method

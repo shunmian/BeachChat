@@ -13,10 +13,9 @@
 
 @interface BCChannelsTableViewController ()
 @property (nonatomic, strong) BCChatManager *chatManager;
-
 @property (nonatomic, strong) NSMutableArray <BCChannel *> *channels;
 @property (nonatomic, strong) RACSignal *channelsSignal;
-@property (nonatomic, strong) FIRDatabaseReference *channelRef;
+@property (nonatomic, strong) FIRDatabaseReference *channelsRef;
 @end
 
 @implementation BCChannelsTableViewController
@@ -24,6 +23,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.tableView.rowHeight = 60;
+    self.tabBarItem.title = @"BeachChat";
+    self.navigationItem.title = self.tabBarItem.title;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -52,11 +53,11 @@
 }
 
 #pragma mark - oteher Setter & Getter
--(FIRDatabaseReference *)channelRef{
-    if(!_channelRef){
-        _channelRef = self.chatManager.channelRef;
+-(FIRDatabaseReference *)channelsRef{
+    if(!_channelsRef){
+        _channelsRef = self.chatManager.channelsRef;
     }
-    return _channelRef;
+    return _channelsRef;
 }
 
 #pragma mark - Table view data source
@@ -79,6 +80,7 @@
         displayName = channel.creator.displayName;
     }
     
+    cell.avartarView.image = [UIImage imageNamed:@"defaultUserAvatar"];
     cell.nameLabel.text = displayName;
     cell.lastMessageBodyLabel.text = channel.lastMessage.body;
     cell.updatedDateLabel.text = channel.updatedDate.description;
@@ -97,7 +99,7 @@
 
 -(RACSignal *)createChannelsSignal{
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        [self.channelRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+        [self.channelsRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
             NSMutableArray *channels = [[BCChannel convertedToChannelsFromJSONs:snapshot] mutableCopy];
             [subscriber sendNext:channels];
         }];

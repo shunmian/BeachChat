@@ -32,32 +32,36 @@ const CGFloat OFFSET = 5;
 }
 
 -(void)setUp{
-
-
 }
 
--(void)updateConstraints{
-    [super updateConstraints];
-    
+-(void)layoutSubviews{
+    [super layoutSubviews];
     [self.avartarView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(@(OFFSET));
-        make.left.equalTo(@(OFFSET));
-        make.bottom.equalTo(@(-OFFSET));
+        make.top.equalTo(self.avartarView.superview.mas_top).with.offset(OFFSET);
+        make.left.equalTo(self.avartarView.superview.mas_left).with.offset(OFFSET);
+        make.bottom.equalTo(self.avartarView.superview.mas_bottom).with.offset(-OFFSET);
         make.width.equalTo(self.avartarView.mas_height);
     }];
 
     [self.nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(@(OFFSET));
-        make.left.equalTo(@(OFFSET));
-        make.height.equalTo(self.contentView.mas_height).multipliedBy(0.5);
-        make.width.equalTo(self.contentView.mas_width).multipliedBy(0.5);
+        make.top.equalTo(self.nameLabel.superview.mas_top).with.offset(OFFSET);
+        make.left.equalTo(self.avartarView.mas_right).with.offset(OFFSET);
+        make.height.equalTo(self.nameLabel.superview.mas_height).multipliedBy(0.5);
+        make.width.equalTo(self.nameLabel.superview.mas_width).multipliedBy(0.5);
+    }];
+    
+    [self.lastMessageBodyLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.nameLabel.mas_bottom).with.offset(OFFSET);
+        make.left.equalTo(self.avartarView.mas_right).with.offset(OFFSET);
+        make.bottom.equalTo(self.lastMessageBodyLabel.superview.mas_bottom).with.offset(-OFFSET);
+        make.width.equalTo(self.lastMessageBodyLabel.superview.mas_width).multipliedBy(0.5);
     }];
     
     [self.updatedDateLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(@(OFFSET));
-        make.right.equalTo(@(-OFFSET));
-        make.width.equalTo(self.contentView.mas_width).multipliedBy(0.25);
-        make.bottom.equalTo(@(-OFFSET));
+        make.top.equalTo(self.updatedDateLabel.superview.mas_top).with.offset(OFFSET);
+        make.right.equalTo(self.updatedDateLabel.superview.mas_right).with.offset(-OFFSET);
+        make.height.equalTo(self.updatedDateLabel.superview.mas_height).multipliedBy(0.4);
+        make.width.equalTo(self.updatedDateLabel.superview.mas_width).multipliedBy(0.25);
     }];
 
 }

@@ -21,26 +21,35 @@ typedef void(^observeCompletion)(NSArray *);
 
 //totoal app users, may not be your friends
 @property (nonatomic, strong) NSMutableArray<BCUser *> *users;
+
 //the app users that are your friends already
 @property (nonatomic, strong) NSMutableArray<BCUser *> *friends;
 @property (nonatomic, strong) NSMutableArray<BCFriendRequest*> *friendRequests;
-
 @property (nonatomic, strong) NSMutableArray<BCChannel *> *channels;
 @property (nonatomic, strong) NSMutableArray<BCMessage *> *messages;
 
-@property (nonatomic, strong) FIRDatabaseReference *channelRef;
-@property (nonatomic, strong) FIRDatabaseReference *userRef;
-@property (nonatomic, strong) FIRDatabaseReference *messageRef;
-@property (nonatomic, strong) FIRDatabaseReference *friendRef;
-@property (nonatomic, strong) FIRDatabaseReference *friendRequestRef;
-@property (nonatomic, strong) FIRDatabaseReference *timeRef;
+
+#pragma mark - Ref
+@property (nonatomic, strong, readonly) FIRDatabaseReference *usersSectionRef;
+
+@property (nonatomic, strong, readonly) FIRDatabaseReference *channelsSectionRef;
+@property (nonatomic, strong, readonly) FIRDatabaseReference *channelsRef;
+
+@property (nonatomic, strong, readonly) FIRDatabaseReference *messagesSectionRef;
+@property (nonatomic, strong, readonly) FIRDatabaseReference *messagesRef;
+
+@property (nonatomic, strong, readonly) FIRDatabaseReference *friendsSectionRef;
+@property (nonatomic, strong, readonly) FIRDatabaseReference *friendsRef;
+
+@property (nonatomic, strong, readonly) FIRDatabaseReference *friendRequestsSectionRef;
+@property (nonatomic, strong, readonly) FIRDatabaseReference *friendRequestsRef;
+
+
 
 +(instancetype)sharedManager;
-
+-(void)setUpWithEntryData:(id)data;
 #pragma mark - channels
 -(void)observeChannelsWithEventType:(FIRDataEventType )eventType completion:(observeCompletion)completion;
-
-
 
 -(void)createChannel:(BCChannel *)channel;
 
@@ -50,10 +59,12 @@ typedef void(^observeCompletion)(NSArray *);
 
 -(void)createUser:(BCUser *)user;
 
--(void)getUserWithIdentity:(NSString *)identity withCompletion:(void(^)(BCUser *user, NSError *error))completion;
+-(void)getUserWithIdentity:(NSString *)identity withCompletion:(void(^)(BCUser *user))completion;
 
 #pragma mark - messages;
 -(void)observeMessagesWithEventType:(FIRDataEventType )eventType completion:(observeCompletion)completion;
+
+-(void)createMessage:(BCMessage *)message inChannel:(BCChannel *)channel withCompletion:(void(^)(BCMessage *, NSError *))completion;
 
 #pragma mark - friendRequests
 

@@ -6,6 +6,7 @@
 //
 //
 
+#import <Photos/Photos.h>
 #import "BCChannelViewController.h"
 #import "JSQMessagesBubbleImage.h"
 #import "JSQMessagesBubbleImageFactory.h"
@@ -15,7 +16,7 @@
 #import "JSQSystemSoundPlayer+JSQMessages.h"
 
 
-@interface BCChannelViewController ()
+@interface BCChannelViewController ()<UITextViewDelegate>
 
 //Static Entry Data
 @property(nonatomic, strong) BCChannel *channel;
@@ -25,8 +26,17 @@
 
 //Messages
 @property(nonatomic, strong) NSMutableArray <BCMessage *>* messages;
-@property(nonatomic, strong) FIRDatabaseReference *channelMessagesRef;
+@property(nonatomic, strong) FIRDatabaseReference *messagesRef;
 @property(nonatomic, strong) RACSignal *messagesSignal;
+
+@property(nonatomic, assign) BOOL isOtherTyping;
+@property(nonatomic, strong) FIRDatabaseReference *selfTypingRef;
+@property(nonatomic, strong) FIRDatabaseReference *otherTypingRef;
+@property(nonatomic, strong) RACSignal *otherTypingSignal;
+
+//Images
+@property(nonatomic, strong) FIRStorageReference *storageImageRef;
+
 
 //Views
 @property(nonatomic, strong) JSQMessagesBubbleImage *outgointBubbleImageView;
@@ -42,14 +52,24 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillResignActive) name:UIApplicationWillResignActiveNotification object:nil];
+    
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"< Chat" style:UIBarButtonItemStylePlain target:self action:@selector(leftBarBTNPressed)];
+    self.navigationItem.title = [self.channel otherOf:self.chatManager.bcUser].displayName;
+    
     self.collectionView.collectionViewLayout.incomingAvatarViewSize = CGSizeZero;
     self.collectionView.collectionViewLayout.outgoingAvatarViewSize = CGSizeZero;
+    
     // Do any additional setup after loading the view.
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 -(void)didPressSendButton:(UIButton *)button
@@ -66,48 +86,20 @@
         BCMessage *message =[[BCMessage alloc] initWithAuthor:self.chatManager.bcUser
                                                    channelKey:self.channel.validKey
                                                          body:text];
-        FIRDatabaseReference *ref = [self.channelMessagesRef childByAutoId];
-        [ref setValue:[message json] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref) {
+        
+        [self.chatManager createMessage:message inChannel:self.channel withCompletion:^(BCMessage *message, NSError *error) {
             if(!error){
-                [ref observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-                    BCMessage *message = [BCMessage convertedToMessageFromJSON:snapshot];
-                    NSLog(@"message sent successfully:%@",message);
-                    BCUser *otherUser = [self.channel otherOf:self.chatManager.bcUser];
-                    FIRDatabaseReference *toParentChannelRef = [self.chatManager.channelRef.parent child:otherUser.validKey];
-                    FIRDatabaseReference *toChannelRef = [toParentChannelRef child:[BCFriendRequest validKeyFrom:self.chatManager.bcUser to:otherUser]];
-                    
-                    //update last message
-                    FIRDatabaseReference *fromChannelRef = [self.chatManager.channelRef child:self.channel.validKey];
-                    [[fromChannelRef child:@"lastMessage"] setValue:[message json]];
-                    [[fromChannelRef child:@"updatedDate"] setValue:message.createdDate.description];
-                    
-                    [toChannelRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-                        if([snapshot.value isKindOfClass:[NSNull class]]){
-                            // if toUser don't have this channel, creat it
-                            [toChannelRef setValue:[self.channel json]];
-                        }else{
-                            
-                        }
-                        [[toChannelRef child:@"lastMessage"] setValue:[message json]];
-                        [[toChannelRef child:@"updatedDate"] setValue:message.createdDate.description];
-                    }];
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [self.collectionView reloadData];
-                    });
-                    
-                    
-                }];
+                NSLog(@"message sent successfully:%@",message);
             }else{
-                NSLog(@"message not sent...");
+                NSLog(@"message sent failed:%@",error);
             }
-         
-         
-            self.inputTextView.text= @"";
-            [self finishSendingMessage];
-            [self scrollToBottomAnimated:YES];
-            [JSQSystemSoundPlayer jsq_playMessageSentSound];
         }];
+        
+        self.inputTextView.text= @"";
+        [self finishSendingMessage];
+        [self scrollToBottomAnimated:YES];
+        [JSQSystemSoundPlayer jsq_playMessageSentSound];
+
     }
     
 }
@@ -135,11 +127,32 @@
     return _inputTextView;
 }
 
--(FIRDatabaseReference *)channelMessagesRef{
-    if(!_channelMessagesRef){
-        _channelMessagesRef = [self.chatManager.messageRef child:self.channel.validKey];
+-(FIRDatabaseReference *)messagesRef{
+    if(!_messagesRef){
+        _messagesRef = self.chatManager.messagesRef.child(self.channel.validKey).section(BCRefMessagesSection);
     }
-    return _channelMessagesRef;
+    return _messagesRef;
+}
+
+-(FIRDatabaseReference *)selfTypingRef{
+    if(!_selfTypingRef){
+        _selfTypingRef = self.chatManager.messagesRef.child(self.channel.validKey).child(@"isTyping");
+    }
+    return _selfTypingRef;
+}
+
+-(FIRDatabaseReference *)otherTypingRef{
+    if(!_otherTypingRef){
+        _otherTypingRef = BCRef.root.section(BCRefMessagesSection).user([self.channel otherOf:self.chatManager.bcUser]).child(self.channel.validKey).child(@"isTyping");
+    }
+    return _otherTypingRef;
+}
+
+-(FIRStorageReference *)storageImageRef{
+    if(!_storageImageRef){
+        _storageImageRef = BCRef.storage;
+    }
+
 }
 
 -(JSQMessagesBubbleImage *)outgointBubbleImageView{
@@ -219,12 +232,32 @@
     return cell;
 }
 
+#pragma mark - UITextView Delegate
+
+-(void)textViewDidBeginEditing:(UITextView *)textView{
+    NSLog(@"%@",NSStringFromSelector(_cmd));
+    [self.selfTypingRef setValue:@(YES)];
+    [NSTimer scheduledTimerWithTimeInterval:10 repeats:YES block:^(NSTimer * _Nonnull timer) {
+        [self.selfTypingRef setValue:@(NO)];
+    }];
+}
+
+-(void)textViewDidChange:(UITextView *)textView{
+    [super textViewDidChange:textView];
+    [self.selfTypingRef setValue:@(YES)];
+}
+
+-(void)textViewDidEndEditing:(UITextView *)textView{
+    NSLog(@"%@",NSStringFromSelector(_cmd));
+    [self.selfTypingRef setValue:@(NO)];
+}
+
 #pragma mark - RACSignal
 
--(RACSignal *)createMessageSignal{
+-(RACSignal *)createMessagesSignal{
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        [self.channelMessagesRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-            NSMutableArray *messages = [[BCMessage convertedToMessagesFromJSONs:snapshot] mutableCopy];;
+        [self.messagesRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+            NSMutableArray *messages = [[BCMessage convertedToMessagesFromJSONs:snapshot] mutableCopy];
             [subscriber sendNext:messages];
         }];
         return [RACDisposable disposableWithBlock:^{
@@ -233,11 +266,35 @@
     }];
 }
 
+-(RACSignal *)createOtherTypingSignal{
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        [self.otherTypingRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+            NSNumber *isTyping;
+            if([snapshot.value isEqual:[NSNull class]]){
+                isTyping = @(NO);
+            }
+            isTyping = snapshot.value;
+            [subscriber sendNext:isTyping];
+        }];
+        return [RACDisposable disposableWithBlock:^{
+            NSLog(@"%@ disposed",NSStringFromSelector(_cmd));
+        }];
+    }];
+}
+
 -(void)setUpSignals{
-    self.messagesSignal = [self createMessageSignal];
+    self.messagesSignal = [self createMessagesSignal];
     [self.messagesSignal subscribeNext:^(NSMutableArray *messages) {
         self.messages = messages;
         [self.collectionView reloadData];
+    }];
+    self.otherTypingSignal = [self createOtherTypingSignal];
+    [self.otherTypingSignal subscribeNext:^(NSNumber *x) {
+        if(x.boolValue == YES){
+            self.navigationItem.title = @"Friend is typing...";
+        }else{
+            self.navigationItem.title = [self.channel otherOf:self.chatManager.bcUser].displayName;
+        }
     }];
 }
 
@@ -273,14 +330,13 @@
     return jsqMessage;
 
 }
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+-(void)leftBarBTNPressed{
+    [self.navigationController popViewControllerAnimated:YES];
 }
-*/
+
+-(void)appWillResignActive{
+    [self.selfTypingRef setValue:@(NO)];
+}
 
 @end

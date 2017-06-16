@@ -26,6 +26,8 @@ typedef NS_ENUM(NSUInteger,BCFriendCategoryIndex){
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.tabBarItem.title = @"Friend";
+    self.navigationItem.title = self.tabBarItem.title;
 }
 
 -(NSArray *)friendsCategory{

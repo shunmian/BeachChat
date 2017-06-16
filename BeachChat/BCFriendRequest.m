@@ -88,9 +88,10 @@
     }
 }
 
-+(BCFriendRequest *)convertedFromJSON:(FIRDataSnapshot *)snapshot{
-    BCUser *fromUser = [BCUser convertedFromJSON:[snapshot childSnapshotForPath:@"from"]];
-    BCUser *toUser = [BCUser convertedFromJSON:[snapshot childSnapshotForPath:@"to"]];
++(BCFriendRequest *)convertedToUserFromJSON:(FIRDataSnapshot *)snapshot{
+    if([snapshot.value isKindOfClass:[NSNull class]]) return nil;
+    BCUser *fromUser = [BCUser convertedToUserFromJSON:[snapshot childSnapshotForPath:@"from"]];
+    BCUser *toUser = [BCUser convertedToUserFromJSON:[snapshot childSnapshotForPath:@"to"]];
     BCFriendRequestState state = ((NSNumber *)[snapshot childSnapshotForPath:@"state"].value).integerValue;
     return [[BCFriendRequest alloc] initWithFrom:fromUser to:toUser state:state];
 }
@@ -98,7 +99,7 @@
 +(NSArray <BCFriendRequest *>*)convertedToFriendRequestsFromJSONs:(FIRDataSnapshot *)snapshot receiver:(BCUser *)receiver{
     NSMutableArray *requests = [NSMutableArray new];
     for(FIRDataSnapshot *item in snapshot.children){
-        BCFriendRequest *request = [BCFriendRequest convertedFromJSON:item];
+        BCFriendRequest *request = [BCFriendRequest convertedToUserFromJSON:item];
         if(receiver && [request.to.validKey isEqualToString:receiver.validKey] && (request.state == BCFriendRequestStateApplied)){
             [requests addObject:request];
         }
@@ -111,7 +112,7 @@
     NSMutableArray *friends = [NSMutableArray new];
     NSAssert(user, @"user must be non nil");
     for(FIRDataSnapshot *item in snapshot.children){
-        BCFriendRequest *request = [BCFriendRequest convertedFromJSON:item];
+        BCFriendRequest *request = [BCFriendRequest convertedToUserFromJSON:item];
         if(request.state == BCFriendRequestStateAccepted){
             BCUser *friend = [request otherOf:user];
             [friends addObject:friend];
@@ -123,13 +124,13 @@
 
 
 /*
-+(NSArray <BCFriendRequest *>*)convertedFromJSONs:(FIRDataSnapshot *)snapshot to:(BCUser *)user{
-    return [BCFriendRequest convertedFromJSONs:snapshot to:user withState:BCFriendRequestStateNoteApplied];
++(NSArray <BCFriendRequest *>*)convertedToUsersFromJSONs:(FIRDataSnapshot *)snapshot to:(BCUser *)user{
+    return [BCFriendRequest convertedToUsersFromJSONs:snapshot to:user withState:BCFriendRequestStateNoteApplied];
 
 }
 
-+(NSArray <BCFriendRequest *>*)convertedFromJSONs:(FIRDataSnapshot *)snapshot{
-    return [BCFriendRequest convertedFromJSONs:snapshot to:nil];
++(NSArray <BCFriendRequest *>*)convertedToUsersFromJSONs:(FIRDataSnapshot *)snapshot{
+    return [BCFriendRequest convertedToUsersFromJSONs:snapshot to:nil];
 }
  */
 

@@ -45,9 +45,11 @@
 }
 
 +(BCMessage *)convertedToMessageFromJSON:(FIRDataSnapshot *)snapshot{
+    if([snapshot.value isKindOfClass:[NSNull class]]) return nil;
+    
     NSDictionary *dataDict = snapshot.value;
     
-    BCUser *author = [BCUser convertedFromJSON:[snapshot childSnapshotForPath:@"author"]];
+    BCUser *author = [BCUser convertedToUserFromJSON:[snapshot childSnapshotForPath:@"author"]];
     NSString *body = dataDict[@"body"];
     
     NSNumber *timeInterval = dataDict[@"createdDate"];

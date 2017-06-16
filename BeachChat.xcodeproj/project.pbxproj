@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		272B8DE41EF11FB300F1822D /* BCDate.m in Sources */ = {isa = PBXBuildFile; fileRef = 272B8DE31EF11FB300F1822D /* BCDate.m */; };
 		272B8DEA1EF148AD00F1822D /* BCChannelTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 272B8DE91EF148AD00F1822D /* BCChannelTableViewCell.m */; };
+		272B8DF41EF17F5500F1822D /* FIRDatabaseReference+Path.m in Sources */ = {isa = PBXBuildFile; fileRef = 272B8DF31EF17F5500F1822D /* FIRDatabaseReference+Path.m */; };
+		272B8DF71EF1841E00F1822D /* BCObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 272B8DF61EF1841E00F1822D /* BCObject.m */; };
+		272B8DFA1EF230A700F1822D /* BCRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 272B8DF91EF230A700F1822D /* BCRef.m */; };
 		279A95941EE7BF8D00B47CC3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 279A95931EE7BF8D00B47CC3 /* main.m */; };
 		279A95971EE7BF8D00B47CC3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 279A95961EE7BF8D00B47CC3 /* AppDelegate.m */; };
 		279A959D1EE7BF8D00B47CC3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 279A959B1EE7BF8D00B47CC3 /* Main.storyboard */; };
@@ -61,6 +64,12 @@
 		272B8DE31EF11FB300F1822D /* BCDate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCDate.m; sourceTree = "<group>"; };
 		272B8DE81EF148AD00F1822D /* BCChannelTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCChannelTableViewCell.h; sourceTree = "<group>"; };
 		272B8DE91EF148AD00F1822D /* BCChannelTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCChannelTableViewCell.m; sourceTree = "<group>"; };
+		272B8DF21EF17F5500F1822D /* FIRDatabaseReference+Path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FIRDatabaseReference+Path.h"; sourceTree = "<group>"; };
+		272B8DF31EF17F5500F1822D /* FIRDatabaseReference+Path.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FIRDatabaseReference+Path.m"; sourceTree = "<group>"; };
+		272B8DF51EF1841E00F1822D /* BCObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCObject.h; sourceTree = "<group>"; };
+		272B8DF61EF1841E00F1822D /* BCObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCObject.m; sourceTree = "<group>"; };
+		272B8DF81EF230A700F1822D /* BCRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCRef.h; sourceTree = "<group>"; };
+		272B8DF91EF230A700F1822D /* BCRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCRef.m; sourceTree = "<group>"; };
 		279A958F1EE7BF8D00B47CC3 /* BeachChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BeachChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		279A95931EE7BF8D00B47CC3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		279A95951EE7BF8D00B47CC3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -150,6 +159,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		272B8DEE1EF178FC00F1822D /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				272B8DF51EF1841E00F1822D /* BCObject.h */,
+				272B8DF61EF1841E00F1822D /* BCObject.m */,
+				272B8DF81EF230A700F1822D /* BCRef.h */,
+				272B8DF91EF230A700F1822D /* BCRef.m */,
+				272B8DF21EF17F5500F1822D /* FIRDatabaseReference+Path.h */,
+				272B8DF31EF17F5500F1822D /* FIRDatabaseReference+Path.m */,
+			);
+			name = Helper;
+			sourceTree = "<group>";
+		};
 		279A95861EE7BF8D00B47CC3 = {
 			isa = PBXGroup;
 			children = (
@@ -188,6 +210,7 @@
 				27AEE31F1EE8EC2500CFFC08 /* BCRootTabController.m */,
 				272B8DE21EF11FB300F1822D /* BCDate.h */,
 				272B8DE31EF11FB300F1822D /* BCDate.m */,
+				272B8DEE1EF178FC00F1822D /* Helper */,
 				27AEE3211EE8EC4100CFFC08 /* BCChatManager.h */,
 				27AEE3221EE8EC4100CFFC08 /* BCChatManager.m */,
 				27AEE3391EE94CFC00CFFC08 /* BCFriendRequest.h */,
@@ -573,6 +596,9 @@
 				279A95CF1EE7CDEF00B47CC3 /* BCLoginViewController.m in Sources */,
 				27AEE3571EECDE2D00CFFC08 /* BCFriendsTableViewController.m in Sources */,
 				27AEE3471EEA68A200CFFC08 /* BCUserProfileViewController.m in Sources */,
+				272B8DF41EF17F5500F1822D /* FIRDatabaseReference+Path.m in Sources */,
+				272B8DFA1EF230A700F1822D /* BCRef.m in Sources */,
+				272B8DF71EF1841E00F1822D /* BCObject.m in Sources */,
 				27AEE34A1EEAD54700CFFC08 /* BCTestViewController.m in Sources */,
 				27AEE3351EE926E400CFFC08 /* FIRUser+User.m in Sources */,
 				27AEE3321EE923C500CFFC08 /* BCMessage.m in Sources */,

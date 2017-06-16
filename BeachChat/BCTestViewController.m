@@ -52,10 +52,11 @@
 
 -(FIRDatabaseReference *)friendRequestStateRef{
     NSString *path = [NSString stringWithFormat:@"%@/%@",[BCFriendRequest validKeyFrom: self.chatManager.bcUser to:self.toUser],@"state"];
-    FIRDatabaseReference *testFriendRequestRef = [self.chatManager.friendRequestRef child:path];
+    FIRDatabaseReference *testFriendRequestRef = [self.chatManager.friendRequestsRef child:path];
     return testFriendRequestRef;
 }
 
+/*
 - (IBAction)getToUserBTNPressed:(id)sender {
     [self.chatManager getUserWithIdentity:@"shunmian@gmail.com" withCompletion:^(BCUser *user, NSError *error) {
         if(!error){
@@ -69,7 +70,7 @@
         }
     }];
 }
-
+*/
 
 
 - (IBAction)addStateSignalBTNPressed:(id)sender {

@@ -8,8 +8,9 @@
 
 #import <FirebaseAuth/FirebaseAuth.h>
 #import "BCFriendRequest.h"
+#import "BCObject.h"
 
-@interface BCUser : NSObject
+@interface BCUser : BCObject<BCObject>
 @property (nonatomic, copy) NSString *identity;
 @property (nonatomic, copy) NSString *displayName;
 @property (nonatomic, copy, readonly) NSString *validKey;
@@ -17,7 +18,7 @@
 
 -(instancetype)initWithIdentity:(NSString*)identity andDisplayName:(NSString *)displayName;
 -(NSDictionary *)json;
-+(BCUser *)convertedFromJSON:(FIRDataSnapshot *)snapshot;
-+(NSArray<BCUser *>*)convertedFromJSONs:(FIRDataSnapshot *)snapshot;
++(BCUser *)convertedToUserFromJSON:(FIRDataSnapshot *)snapshot;
++(NSArray<BCUser *>*)convertedToUsersFromJSONs:(FIRDataSnapshot *)snapshot;
 +(NSString *)validKeyFromIdentity:(NSString *)identity;
 @end

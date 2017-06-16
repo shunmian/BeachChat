@@ -17,16 +17,18 @@
 
 @property (nonatomic, strong) BCUser *creator;
 @property (nonatomic, strong) NSMutableArray <BCUser *> *otherUsers;
-@property (nonatomic, strong) NSDate *createdDate;
-@property (nonatomic, strong) NSDate *updatedDate;
+@property (nonatomic, strong, readonly) NSDate *createdDate;
+@property (nonatomic, assign) NSTimeInterval createdTimeStamp;
+@property (nonatomic, assign) NSTimeInterval updatedTimeStamp;
+@property (nonatomic, strong, readonly) NSDate *updatedDate;
 @property (nonatomic, strong) BCMessage *lastMessage;
 
 
 -(instancetype)initWithCreator:(BCUser *)creator
                     otherUsers:(NSMutableArray <BCUser *>*)otherUsers
                    displayName:(NSString *)displayName
-                   createdDate:(NSDate *)createdDate
-                   updatedDate:(NSDate *)updatedDate
+              createdTimeStamp:(NSTimeInterval)createdTimeStamp
+              updatedTimeStamp:(NSTimeInterval)updatedTimeStamp
                    lastMessage:(BCMessage *)lastMessage;
 
 -(instancetype)initFrom:(BCUser *)from to:(BCUser *)to;

@@ -16,11 +16,11 @@
 @implementation BCChannel
 
 -(instancetype)initWithCreator:(BCUser *)creator
-                    otherUsers:(NSMutableArray<BCUser *> *)otherUsers
+                    otherUsers:(NSMutableArray <BCUser *>*)otherUsers
                    displayName:(NSString *)displayName
-                   createdDate:(NSDate *)createdDate
-                   updatedDate:(NSDate *)updatedDate
-                   lastMessage:(BCMessage *)lastMessage
+              createdTimeStamp:(NSTimeInterval)createdTimeStamp
+              updatedTimeStamp:(NSTimeInterval)updatedTimeStamp
+                   lastMessage:(BCMessage *)lastMessage;
 {
     if(self = [super init]){
         BCUser *to = (BCUser *)[otherUsers firstObject];
@@ -33,8 +33,8 @@
         _displayName = displayName? displayName:[NSString stringWithFormat:@"%@ %@",creator.displayName,to.displayName];
         _creator = creator;
         _otherUsers = otherUsers;
-        _createdDate = createdDate;
-        _updatedDate = updatedDate;
+        _createdTimeStamp = createdTimeStamp;
+        _updatedTimeStamp = updatedTimeStamp;
         _lastMessage = lastMessage;
         _validKey = [_identity stringByReplacingOccurrencesOfString:@"." withString:@"_"];
     }
@@ -42,16 +42,28 @@
 }
 
 -(instancetype)initFrom:(BCUser *)from to:(BCUser *)to{
-    NSDate *date = [NSDate date];
     if(self = [self initWithCreator:from
                          otherUsers:[@[to] mutableCopy]
                         displayName:nil
-                        createdDate:date
-                        updatedDate:date
+                   createdTimeStamp:0
+                   updatedTimeStamp:0
                         lastMessage:nil]){
     
     }
     return self;
+}
+
+-(NSDate *)createdDate{
+    return [self localDateFromTimeInterval:_createdTimeStamp];
+}
+
+-(NSDate *)updatedDate{
+    return [self localDateFromTimeInterval:_createdTimeStamp];
+}
+
+-(NSDate *)localDateFromTimeInterval:(NSTimeInterval)timeInterval{
+    NSDate *sourceDate = [NSDate dateWithTimeIntervalSince1970:timeInterval/1000];
+    return [BCDate convertToLoalTimeZone:sourceDate];
 }
 
 -(NSDictionary *)json{
@@ -65,45 +77,49 @@
                            @"displayName":self.displayName,
                            @"creator":[self.creator json],
                            @"otherUsers":otherUsersJson,
-                           @"createdDate":[FIRServerValue timestamp],
-                           @"updatedDate":[FIRServerValue timestamp]};
+                           @"createdTimeStamp":[FIRServerValue timestamp],
+                           @"updatedTimeStamp":[FIRServerValue timestamp]};
     return dict;
 }
 
 -(NSString *)description{
-    return [NSString stringWithFormat:@"%@",[self json]];
+    NSMutableDictionary *otherUsersJson = [NSMutableDictionary new];
+    for(BCUser *user in self.otherUsers){
+        [otherUsersJson setObject:[user json] forKey: user.validKey];
+    };
+    NSDictionary *dict = @{@"identity":self.identity,
+                           @"validkey":self.validKey,
+                           @"displayName":self.displayName,
+                           @"creator":[self.creator json],
+                           @"otherUsers":otherUsersJson,
+                           @"createdDate":[self createdDate],
+                           @"updatedTimeStamp":[self updatedDate]};
+    
+    return [NSString stringWithFormat:@"%@",dict];
 }
 
 +(BCChannel *)convertedToChannelFromJSON:(FIRDataSnapshot *)snapshot{
-    BCUser *creator = [BCUser convertedFromJSON:[snapshot childSnapshotForPath:@"creator"]];
+    BCUser *creator = [BCUser convertedToUserFromJSON:[snapshot childSnapshotForPath:@"creator"]];
     NSDictionary *dataDict = snapshot.value;
     NSMutableArray *otherUsers = [NSMutableArray new];
     for(FIRDataSnapshot *userSnapshot in [snapshot childSnapshotForPath:@"otherUsers"].children){
-        BCUser *user = [BCUser convertedFromJSON:userSnapshot];
+        BCUser *user = [BCUser convertedToUserFromJSON:userSnapshot];
         [otherUsers addObject:user];
     }
     
-    NSNumber *timeInterval = dataDict[@"createdDate"];
-    NSTimeInterval t = timeInterval.integerValue;
-    NSDate *sourceDate = [NSDate dateWithTimeIntervalSince1970:t/1000];
-    NSDate *createdDate = [BCDate convertToLoalTimeZone:sourceDate];
-    
-    
-    timeInterval = dataDict[@"updatedDate"];
-    t = timeInterval.integerValue;
-    sourceDate = [NSDate dateWithTimeIntervalSince1970:t/1000];
-    NSDate *updatedDate = [BCDate convertToLoalTimeZone:sourceDate];
+    NSNumber *createdTimeStamp = (NSNumber *)dataDict[@"createdTimeStamp"];
+    NSNumber *updatedTimeStamp = (NSNumber *)dataDict[@"updatedTimeStamp"];
+
     
     FIRDataSnapshot *lastMessageSnapshot = [snapshot childSnapshotForPath:@"lastMessage"];
     BCMessage *lastMessage = [BCMessage convertedToMessageFromJSON:lastMessageSnapshot];
 
     
-    
     BCChannel *channel = [[BCChannel alloc] initWithCreator:creator
                                                  otherUsers:otherUsers
                                                 displayName:dataDict[@"displayName"]
-                                                createdDate:createdDate
-                                                updatedDate:updatedDate
+                                           createdTimeStamp:createdTimeStamp.integerValue
+                                           updatedTimeStamp:updatedTimeStamp.integerValue
                                                 lastMessage:lastMessage];
     return channel;
 }

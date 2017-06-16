@@ -12,7 +12,7 @@
 @interface BCFriendRequestsTableViewController ()
 @property(nonatomic, strong) BCChatManager *chatManager;
 @property(nonatomic, strong) NSMutableArray<BCFriendRequest *> *friendRequests;
-@property(nonatomic, strong) FIRDatabaseReference *friendRequestRef;
+@property(nonatomic, strong) FIRDatabaseReference *friendRequestsRef;
 @property(nonatomic, strong) RACSignal *friendRequestsSignal;
 @end
 
@@ -57,18 +57,18 @@
     return _friendRequests;
 }
 
--(FIRDatabaseReference *)friendRequestRef{
-    if(!_friendRequestRef){
-        _friendRequestRef = self.chatManager.friendRequestRef;
+-(FIRDatabaseReference *)friendRequestsRef{
+    if(!_friendRequestsRef){
+        _friendRequestsRef = self.chatManager.friendRequestsRef;
     }
-    return _friendRequestRef;
+    return _friendRequestsRef;
 }
 
 #pragma mark - RACSignal
 
 -(RACSignal *)createFriendRequestsSignal{
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        [self.friendRequestRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+        [self.friendRequestsRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
             NSMutableArray *friendRequests = [[BCFriendRequest convertedToFriendRequestsFromJSONs:snapshot receiver:self.chatManager.bcUser] mutableCopy];
             [subscriber sendNext:friendRequests];
         }];

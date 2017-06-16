@@ -35,8 +35,7 @@
         if(!error){
             NSLog(@"user create successful: %@",user);
             user.identity = self.emailTextField.text;
-            [[BCChatManager sharedManager] setFirUser:user];
-            
+            [[BCChatManager sharedManager] setUpWithEntryData:user];
             [[BCChatManager sharedManager] createUser:[BCChatManager sharedManager].bcUser];
             NSLog(@"before segue");
             [self performSegueWithIdentifier:@"LoggedInSegue" sender:self];

@@ -34,7 +34,7 @@ typedef NS_ENUM(NSUInteger,BCFriendRequestState){
 
 -(FIRDatabaseReference *)toRef;
 -(FIRDatabaseReference *)fromRef;
-+(BCFriendRequest *)convertedFromJSON:(FIRDataSnapshot *)snapshot;
++(BCFriendRequest *)convertedToUserFromJSON:(FIRDataSnapshot *)snapshot;
 
 /* return friendRequests from @"/friendRequests/user_validkey" that is sending to user with BCFriendRequestStateApplied.
  */
