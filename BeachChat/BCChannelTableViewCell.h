@@ -7,11 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BCChannelUnreadMessageNotificationView.h"
 
 @interface BCChannelTableViewCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UIImageView *avartarView;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *lastMessageBodyLabel;
 @property (weak, nonatomic) IBOutlet UILabel *updatedDateLabel;
+
+@property (weak, nonatomic) IBOutlet BCChannelUnreadMessageNotificationView *unreadMessageNotificationView;
 
 @end

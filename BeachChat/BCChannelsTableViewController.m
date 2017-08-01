@@ -22,7 +22,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.tableView.rowHeight = 60;
+    self.tableView.rowHeight = 70;
     self.tabBarItem.title = @"BeachChat";
     self.navigationItem.title = self.tabBarItem.title;
 }
@@ -73,17 +73,17 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     BCChannelTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"channelCell" forIndexPath:indexPath];
     BCChannel *channel = self.channels[indexPath.row];
-    NSString *displayName;
-    if([self.chatManager.bcUser isEqual:channel.creator]){
-        displayName = channel.otherUsers[0].displayName;
-    }else{
-        displayName = channel.creator.displayName;
-    }
     
     cell.avartarView.image = [UIImage imageNamed:@"defaultUserAvatar"];
-    cell.nameLabel.text = displayName;
-    cell.lastMessageBodyLabel.text = channel.lastMessage.body;
-    cell.updatedDateLabel.text = channel.updatedDate.description;
+    if(channel.unreadMessageNumber == 0){
+        cell.lastMessageBodyLabel.text =  channel.lastMessage ? [NSString stringWithFormat:@"%@:%@",channel.lastMessage.author.displayName,channel.lastMessage.body]:nil;
+    }else{
+        cell.lastMessageBodyLabel.text = channel.lastMessage ? [NSString stringWithFormat:@"[%ld条] %@:%@",(long)channel.unreadMessageNumber,channel.lastMessage.author.displayName,channel.lastMessage.body]:nil;
+    }
+    cell.unreadMessageNotificationView.hidden = channel.unreadMessageNumber == 0? YES:NO;
+    cell.updatedDateLabel.text = [NSDate toStringFromTimeInterval:channel.updatedTimeStamp];
+    cell.nameLabel.text = [channel otherOf:self.chatManager.bcUser].displayName;
+    
     return cell;
 }
 
@@ -92,7 +92,7 @@
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 60;
+    return 70;
 }
 
 #pragma mark - RACSignal
@@ -124,6 +124,25 @@
 -(void)setUpWithEntryData:(id)data{
     [self setUpSignals];
 }
+
+
+-(RACSignal *)createUnreadMessageNumberSignalForChannel:(BCChannel *)channel{
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        FIRDatabaseReference *ref = BCRef.root.section(BCRefChannelsSection).user(self.chatManager.bcUser).child(channel.validKey).child(@"unreadMessageNumber");
+        [ref observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+            if(![snapshot isValueExist]){
+                [subscriber sendNext:@(0)];
+            }else{
+                NSNumber *unreadMessageNumber = snapshot.value;
+                [subscriber sendNext:unreadMessageNumber];
+            }
+        }];
+        return [RACDisposable disposableWithBlock:^{
+            NSLog(@"%@ disposed",NSStringFromSelector(_cmd));
+        }];
+    }];
+}
+
 
 /*
 // Override to support conditional editing of the table view.

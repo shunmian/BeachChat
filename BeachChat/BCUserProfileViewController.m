@@ -17,6 +17,8 @@
 //RACSignal
 @property (nonatomic, strong) FIRDatabaseReference *userDisplayNameRef;
 @property (nonatomic, strong) RACSignal *userDisplayNameSignal;
+@property (nonatomic, strong) FIRDatabaseReference *userAvatarURLRef;
+@property (nonatomic, strong) RACSignal *userAvatarImageSignal;
 
 @property (nonatomic, strong) FIRDatabaseReference *friendRequestRef;
 @property (nonatomic, strong) FIRDatabaseReference *friendsRef;
@@ -24,6 +26,8 @@
 
 //RACSignal related views
 @property (weak, nonatomic) IBOutlet UILabel *displayNameLabel;
+@property (weak, nonatomic) IBOutlet UILabel *identityLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *avatarView;
 @property (weak, nonatomic) IBOutlet UIButton *sendFriendRequestBTN;
 @property (weak, nonatomic) IBOutlet UIButton *waitFriendRequestBTN;
 @property (weak, nonatomic) IBOutlet UIButton *friendRequestApprovedBTN;
@@ -31,11 +35,82 @@
 
 @end
 
+const CGFloat kBCUserProfileOffset = 10;
+
 @implementation BCUserProfileViewController
+
 
 #pragma mark - Life Cycle
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.sendFriendRequestBTN.layer.cornerRadius = 5;
+    self.waitFriendRequestBTN.layer.cornerRadius = 5;
+    self.friendRequestApprovedBTN.layer.cornerRadius = 5;
+    self.acceptFriendRequestBTN.layer.cornerRadius = 5;
+    self.identityLabel.text = [NSString stringWithFormat:@"ID: %@", self.user.identity];
+    self.avatarView.layer.cornerRadius = 6;
+    self.avatarView.layer.masksToBounds = YES;
+}
+
+-(void)updateViewConstraints{
+    [super updateViewConstraints];
+    [self.sendFriendRequestBTN mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(self.sendFriendRequestBTN.superview.mas_centerX);
+        make.centerY.equalTo(self.sendFriendRequestBTN.superview.mas_centerY).multipliedBy(1.8);
+        make.width.equalTo(self.sendFriendRequestBTN.superview.mas_width).multipliedBy(0.8);
+        make.height.equalTo(self.sendFriendRequestBTN.superview.mas_height).multipliedBy(0.1);
+    }];
+    
+    [self.waitFriendRequestBTN mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(self.waitFriendRequestBTN.superview.mas_centerX);
+        make.centerY.equalTo(self.waitFriendRequestBTN.superview.mas_centerY).multipliedBy(1.8);
+        make.width.equalTo(self.waitFriendRequestBTN.superview.mas_width).multipliedBy(0.8);
+        make.height.equalTo(self.waitFriendRequestBTN.superview.mas_height).multipliedBy(0.1);
+    }];
+    
+    [self.friendRequestApprovedBTN mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(self.friendRequestApprovedBTN.superview.mas_centerX);
+        make.centerY.equalTo(self.friendRequestApprovedBTN.superview.mas_centerY).multipliedBy(1.8);
+        make.width.equalTo(self.friendRequestApprovedBTN.superview.mas_width).multipliedBy(0.8);
+        make.height.equalTo(self.friendRequestApprovedBTN.superview.mas_height).multipliedBy(0.1);
+    }];
+    
+    [self.acceptFriendRequestBTN mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(self.acceptFriendRequestBTN.superview.mas_centerX);
+        make.centerY.equalTo(self.acceptFriendRequestBTN.superview.mas_centerY).multipliedBy(1.8);
+        make.width.equalTo(self.acceptFriendRequestBTN.superview.mas_width).multipliedBy(0.8);
+        make.height.equalTo(self.acceptFriendRequestBTN.superview.mas_height).multipliedBy(0.1);
+    }];
+    
+    [self.userInfoView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(self.userInfoView.superview.mas_centerX);
+        make.centerY.equalTo(self.userInfoView.superview.mas_centerY).multipliedBy(0.2);
+        make.width.equalTo(self.acceptFriendRequestBTN.superview.mas_width).multipliedBy(1.0);
+        make.height.equalTo(self.acceptFriendRequestBTN.superview.mas_height).multipliedBy(0.15);
+    }];
+    
+    [self.avatarView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.avatarView.superview.mas_top).with.offset(kBCUserProfileOffset);
+        make.left.equalTo(self.avatarView.superview.mas_left).with.offset(kBCUserProfileOffset);
+        make.bottom.equalTo(self.avatarView.superview.mas_bottom).with.offset(-kBCUserProfileOffset);
+        make.width.equalTo(self.avatarView.mas_height);
+    }];
+    
+    [self.displayNameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.displayNameLabel.superview.mas_top).with.offset(kBCUserProfileOffset);
+        make.left.equalTo(self.avatarView.mas_right).with.offset(kBCUserProfileOffset);
+        //        make.height.equalTo(self.nameLabel.superview.mas_height).multipliedBy(0.5);
+//        make.width.equalTo(self.displayNameLabel.superview.mas_width).multipliedBy(0.5);
+        make.right.equalTo(self.displayNameLabel.superview.mas_right).with.offset(-kBCUserProfileOffset);
+    }];
+    
+    [self.identityLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        //        make.top.equalTo(self.nameLabel.mas_bottom).with.offset(kBCUserProfileOffset/2);
+        make.left.equalTo(self.avatarView.mas_right).with.offset(kBCUserProfileOffset);
+        make.bottom.equalTo(self.identityLabel.superview.mas_bottom).with.offset(-kBCUserProfileOffset);
+        make.right.equalTo(self.identityLabel.superview.mas_right).with.offset(-kBCUserProfileOffset);
+    }];
+    
 }
 
 - (IBAction)sendFriendRequestBTNPressed:(id)sender {
@@ -55,8 +130,13 @@
     [fromRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
         if([snapshot.value isKindOfClass:[NSNull class]]){
             BCChannel *channel = [[BCChannel alloc] initFrom:self.chatManager.bcUser to:self.user];
-            [fromRef setValue:[channel json]];
-            [self.tabBarController setSelectedIndex:0];
+            [self.chatManager createChannel:channel forUser:self.chatManager.bcUser WithCompletion:^(BCChannel *returnedChannel) {
+                [self.tabBarController setSelectedIndex:0];
+                UINavigationController *navc = self.tabBarController.viewControllers[0];
+                BCChannelsTableViewController *ctvc =  navc.viewControllers[0];
+                [ctvc.tableView reloadData];
+                [ctvc tableView:ctvc.tableView didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+            }];
         }else{
 //            BCChannel *channel = [BCChannel convertedToChannelFromJSON:snapshot];
             FIRDataSnapshot *updatedSnapshot = [snapshot childSnapshotForPath:@"updatedDate"];
@@ -101,6 +181,12 @@
     return _userDisplayNameRef;
 }
 
+-(FIRDatabaseReference *)userAvatarURLRef{
+    if(!_userAvatarURLRef){
+        _userAvatarURLRef = BCRef.root.section(BCRefUsersSection).user(self.user).child(@"avatar").child(@"url");
+    }
+    return _userAvatarURLRef;
+}
 
 -(FIRDatabaseReference *)friendRequestRef{
     if(!_friendRequestRef){
@@ -128,6 +214,30 @@
         }];
     }];
 }
+
+-(RACSignal *)createUserAvatarImageSignal{
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        [self.userAvatarURLRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+            if(![snapshot isValueExist]){
+                UIImage *image = [UIImage imageNamed:@"defaultUserAvatar"];
+                [subscriber sendNext:image];
+            }else{
+                NSString *url = snapshot.value;
+                [self.chatManager fetchImageDataAtURL:url withComletion:^(UIImage *image, NSError *error) {
+                    if(!error){
+                        [subscriber sendNext:image];
+                    }else{
+                        [subscriber sendError:error];
+                    }
+                }];
+            }
+        }];
+        return [RACDisposable disposableWithBlock:^{
+            NSLog(@"%@ disposed",NSStringFromSelector(_cmd));
+        }];
+    }];
+}
+
 
 -(RACSignal *)createFriendRequestSignal{
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
@@ -202,6 +312,12 @@
                   break;
           }
       }];
+    
+    self.userAvatarImageSignal = [self createUserAvatarImageSignal];
+    [self.userAvatarImageSignal subscribeNext:^(UIImage *avatar) {
+        self.avatarView.image = avatar;
+    }];
+    
 }
 
 -(void)initializeViews{

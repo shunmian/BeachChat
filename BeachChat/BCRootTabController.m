@@ -22,6 +22,14 @@
     UINavigationController *nav = self.viewControllers[0];
     BCChannelsTableViewController *ctvc = nav.viewControllers[0];
     [ctvc setUpWithEntryData:nil];
+    self.tabBar.selectedImageTintColor= [UIColor colorWithRed:90/255.0 green:186/255.0 blue:122/255.0 alpha:1];
+    self.tabBar.items[0].image = [UIImage imageNamed:@"Chat_Normal"];
+    [self.tabBar.items[0] setSelectedImage:[UIImage imageNamed:@"Chat_Selected"]];
+    self.tabBar.items[1].image = [UIImage imageNamed:@"Friend_Normal"];
+    [self.tabBar.items[1] setSelectedImage:[UIImage imageNamed:@"Friend_Selected"]];
+    self.tabBar.items[2].image = [UIImage imageNamed:@"Me_Normal"];
+    [self.tabBar.items[2] setSelectedImage:[UIImage imageNamed:@"Me_Selected"]];
+    
 }
 
 - (void)didReceiveMemoryWarning {

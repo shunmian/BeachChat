@@ -10,11 +10,9 @@
 
 @implementation FIRDatabaseReference (Path)
 
-+(FIRDatabaseReference *)root{
-    return [[FIRDatabase database] reference];
-}
 
--(BCPathSectionBlock)section{
+
+-(BCJSONPathSectionBlock)section{
     return ^FIRDatabaseReference *(BCRefSection sect){
         NSString *sectStr;
         switch (sect) {
@@ -40,19 +38,19 @@
     };
 }
 
--(BCPathUserBlock)user{
+-(BCJSONPathUserBlock)user{
     return ^FIRDatabaseReference*(BCUser *user){
         return [self child:user.validKey];
     };
 }
 
--(BCPathItemBlock)item{
+-(BCJSONPathItemBlock)item{
     return ^FIRDatabaseReference*(id<BCObject> item){
         return [self child:item.validKey];
     };
 }
 
--(BCPathChildBlock)child{
+-(BCJSONPathChildBlock)child{
     return ^FIRDatabaseReference*(NSString *path){
         return [self child:path];
     };

@@ -8,72 +8,104 @@
 
 #import "BCMessage.h"
 
+@interface BCMessage()
+@property(nonatomic, strong, readwrite) NSString *validKey;
+@end
+
 @implementation BCMessage
 
--(instancetype)initWithAuthor:(BCUser *)author
-                      channelKey:(NSString *)channelKey
-                         body:(NSString *)body
-             createdTimeStamp:(NSTimeInterval)createdTimeStamp{
+
+-(instancetype)initFromServerWithAuthor:(BCUser *)author
+                             channelKey:(NSString *)channelKey
+                                   body:(NSString *)body
+                               validKey:(NSString *)validKey
+                       createdTimeStamp:(NSTimeInterval)createdTimeStamp{
+    
     if(self = [super init]){
         _author = author;
         _channelKey = channelKey;
+        _validKey = validKey;
         _body = body;
         _createdTimeStamp = createdTimeStamp;
     }
     return self;
 }
 
--(instancetype)initWithAuthor:(BCUser *)author
-                   channelKey:(NSString *)channelKey
-                         body:(NSString *)body{
-    
-    if(self = [self initWithAuthor:author
-                        channelKey:channelKey
-                              body:body
-                  createdTimeStamp:0]){
-    
+-(instancetype)initFromLocalWithAuthor:(BCUser *)author
+                            channelKey:(NSString *)channelKey
+                                  body:(NSString *)body{
+    if(self = [super init]){
+        _author = author;
+        _channelKey = channelKey;
+        NSTimeInterval t = [NSDate timeIntervalSinceReferenceDate];
+        _validKey = [NSString stringWithFormat:@"%lld",(int64_t)(t*1000)];
+        _body = body;
+        _createdTimeStamp = 0;
     }
     return self;
 }
 
--(instancetype)initWithAuthor:(BCUser *)author
-                   channelKey:(NSString *)channelKey
-                   mediatItem:(JSQMediaItem *)mediaItem{
+-(instancetype)initFromServerWithAuthor:(BCUser *)author
+                             channelKey:(NSString *)channelKey
+                                   body:(NSString *)body
+                               validKey:(NSString *)validKey
+                          mediatItemKey:(NSString *)mediaItemURL
+                        createdTimStamp:(NSTimeInterval)createdTimeStamp{
     if(self = [super init]){
         _author = author;
         _channelKey = channelKey;
-        _mediaItem = mediaItem;
+        _body = body;
+        _validKey = validKey;
+        _mediaItemURL = mediaItemURL;
+        _createdTimeStamp = createdTimeStamp;
     }
     return self;
 }
 
--(instancetype)initWithAuthor:(BCUser *)author
-                   channelKey:(NSString *)channelKey
-                mediatItemKey:(NSString *)mediaItemKey
-             createdTimeStamp:(NSTimeInterval)createTimeStamp{
+//-(instancetype)initFromLocalWithAuthor:(BCUser *)author
+//                            channelKey:(NSString *)channelKey
+//                            mediatItem:(JSQPhotoMediaItem *)mediaItem{
+//    if(self = [super init]){
+//        _author = author;
+//        _channelKey = channelKey;
+//        _mediaItem = mediaItem;
+//        NSTimeInterval t = [NSDate timeIntervalSinceReferenceDate];
+//        _validKey = [NSString stringWithFormat:@"%@&+&%f",_channelKey,t*1000];
+//        _createdTimeStamp = 0;
+//    }
+//    return self;
+//}
+
+-(instancetype)initFromLocalWithAuthor:(BCUser *)author
+                            channelKey:(NSString *)channelKey
+                         mediatItemURL:(NSString *)mediaItemURL{
     if(self = [super init]){
         _author = author;
         _channelKey = channelKey;
-        _mediaItemKey = mediaItemKey;
-        _createdTimeStamp = createTimeStamp;
+        _body = @"[image]";
+        _mediaItemURL = mediaItemURL;
+        NSTimeInterval t = [NSDate timeIntervalSinceReferenceDate];
+        _validKey = [NSString stringWithFormat:@"%lld",(int64_t)(t*1000)];
+        _createdTimeStamp = 0;
     }
     return self;
 }
+
+
+
 
 -(NSDate *)createdDate{
-    return [self localDateFromTimeInterval:self.createdTimeStamp];
+    return [NSDate convertedToDateFromTimeInterval:self.createdTimeStamp];
 }
 
--(NSDate *)localDateFromTimeInterval:(NSTimeInterval)timeInterval{
-    NSDate *sourceDate = [NSDate dateWithTimeIntervalSince1970:timeInterval/1000];
-    return [BCDate convertToLoalTimeZone:sourceDate];
-}
+
 
 -(NSDictionary *)json{
     NSDictionary *dict = @{@"author":[self.author json],
                            @"channelKey":self.channelKey,
                            @"body":self.body,
-                           @"createdDate":[FIRServerValue timestamp]};
+                           @"validKey":self.validKey,
+                           @"createdTimeStamp":[FIRServerValue timestamp]};
 
     return dict;
 }
@@ -81,8 +113,10 @@
 -(NSDictionary *)photoJson{
     NSDictionary *dict = @{@"author":[self.author json],
                            @"channelKey":self.channelKey,
-                           @"mediaItemKey":self.mediaItemKey,
-                           @"createdDate":[FIRServerValue timestamp],
+                           @"mediaItemURL":self.mediaItemURL,
+                           @"body":self.body,
+                           @"validKey":self.validKey,
+                           @"createdTimeStamp":[FIRServerValue timestamp],
                            };
     return dict;
 }
@@ -96,9 +130,10 @@
     NSString *body = dataDict[@"body"];
     
     NSNumber *timeInterval = dataDict[@"createdTimeStamp"];
+    NSString *validKey = dataDict[@"validKey"];
     NSString *channelKey = dataDict[@"channelKey"];
     
-    BCMessage *message = [[BCMessage alloc] initWithAuthor:author channelKey:channelKey body:body createdTimeStamp:timeInterval.integerValue];
+    BCMessage *message = [[BCMessage alloc] initFromServerWithAuthor:author channelKey:channelKey body:body validKey:validKey createdTimeStamp:timeInterval.doubleValue];
     
     return message;
 }
@@ -122,12 +157,11 @@
     BCUser *author = [BCUser convertedToUserFromJSON:[snapshot childSnapshotForPath:@"author"]];
     NSDictionary *dataDict = snapshot.value;
     NSString *channelKey = dataDict[@"channelKey"];
-    NSString *mediaItemKey = dataDict[@"mediaItemKey"];
+    NSString *mediaItemURL = dataDict[@"mediaItemURL"];
+    NSString *validKey = dataDict[@"validKey"];
+    NSString *body = dataDict[@"body"];
     NSNumber *createdTimeStamp = dataDict[@"createdTimeStamp"];
-    BCMessage *photoMessage = [[BCMessage alloc] initWithAuthor:author
-                                                     channelKey:channelKey
-                                                  mediatItemKey:mediaItemKey
-                                               createdTimeStamp:createdTimeStamp.integerValue];
+    BCMessage *photoMessage = [[BCMessage alloc] initFromServerWithAuthor:author channelKey:channelKey body:body validKey:validKey mediatItemKey:mediaItemURL createdTimStamp:createdTimeStamp.doubleValue];
     return photoMessage;
 }
 
@@ -135,7 +169,7 @@
     NSMutableArray *messages = [NSMutableArray new];
     for (FIRDataSnapshot *item in snapshot.children){
         BCMessage *message;
-        if([[item childSnapshotForPath:@"mediaItemKey"].value isKindOfClass:[NSNull class]]){
+        if([[item childSnapshotForPath:@"mediaItemURL"].value isKindOfClass:[NSNull class]]){
             message = [BCMessage convertedToTextMessageFromJSON:item];
         }else{
             message = [BCMessage convertedToPhotoMessageFromJSON:item];
@@ -144,11 +178,37 @@
     }
     
     NSArray *sortedMessages = [messages sortedArrayUsingComparator:^NSComparisonResult(BCMessage *obj1, BCMessage * obj2) {
-        return [obj1.createdDate compare:obj2.createdDate];
+        return [obj1 compare:obj2];
     }];
     
     return sortedMessages;
+}
 
+- (NSComparisonResult)compare:(id)object{
+    NSCParameterAssert([object isKindOfClass:[BCMessage class]]);
+    BCMessage *other = (BCMessage *)object;
+    if(self.createdTimeStamp < other.createdTimeStamp){
+        return NSOrderedAscending;
+    }else if(self.createdTimeStamp > other.createdTimeStamp){
+        return NSOrderedDescending;
+    }else{
+        return NSOrderedSame;
+    }
+}
+
+-(BOOL)isMediaItem{
+    if(self.mediaItemURL){
+        return YES;
+    }else{
+        return NO;
+    }
+}
++(BOOL)isMediaItem:(FIRDataSnapshot *)snapshot{
+    if([[snapshot childSnapshotForPath:@"mediaItemURL"].value isKindOfClass:[NSNull class]]){
+        return NO;
+    }else{
+        return YES;
+    }
 }
 
 @end

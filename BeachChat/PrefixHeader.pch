@@ -17,10 +17,14 @@
 #import <FirebaseAuth/FirebaseAuth.h>
 #import <FirebaseDatabase/FirebaseDatabase.h>
 #import "FIRDatabaseReference+Path.h"
+#import "FIRStorageReference+Path.h"
 #import "BCChatManager.h"
-#import "BCDate.h"
+#import "NSDate+ToString.h"
 #import "BCObject.h"
 #import "BCRef.h"
+#import "FIRDataSnapshot+Exist.h"
+#import "BCAvatar.h"
+
 // You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
 
 #endif /* CommonHeader_pch */

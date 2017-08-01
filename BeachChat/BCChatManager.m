@@ -9,8 +9,10 @@
 #import "BCChatManager.h"
 #import "FIRDatabaseReference+Path.h"
 
+
 @interface BCChatManager()
 @property (nonatomic, strong, readwrite) BCUser *bcUser;
+@property (nonatomic, assign) BOOL isSignIn;
 
 #pragma mark - Ref
 @property (nonatomic, strong, readwrite) FIRDatabaseReference *usersSectionRef;
@@ -27,26 +29,34 @@
 @property (nonatomic, strong, readwrite) FIRDatabaseReference *friendRequestsSectionRef;
 @property (nonatomic, strong, readwrite) FIRDatabaseReference *friendRequestsRef;
 
-
-
-
 @end
 
 @implementation BCChatManager
 
+static NSString *const kPhotoNotSetKey = @"NOTSET";
+
 #pragma mark - Life Cycle
 
 
--(void)setUpWithEntryData:(id)data{
+-(void)setUpWithEntryData:(id)data isSignIn:(BOOL)isSignIn{
     NSAssert([data isKindOfClass:[FIRUser class]], @"data must be FIRUser class");
     self.firUser = (FIRUser *)data;
+    self.isSignIn = isSignIn;
+    if(!isSignIn){
+        [self createUser:[self.firUser convertToBCUser]];
+    }
+    
+    [self setUpSignals];
 }
 
 -(void)setUpSignals{
-    RAC(self,channels) = [self createChannelsSignal];
-    RAC(self,users) = [self createUsersSignal];
-    RAC(self,friends) = [self createFriendsSignal];
-    RAC(self,friendRequests) = [self createFriendRequestsSignal];
+    
+    RAC(self, bcUser) = [self createUserSignalForvalidKey:[self.firUser convertToBCUser].validKey];
+//    RAC(self,channels) = [self createChannelsSignal];
+//    RAC(self,users) = [self createUsersSignal];
+//    RAC(self,friends) = [self createFriendsSignal];
+//    RAC(self,friendRequests) = [self createFriendRequestsSignal];
+    
 }
 
 +(instancetype)sharedManager{
@@ -155,8 +165,16 @@
     }];
 }
 
--(void)createChannel:(BCChannel *)channel forUser:(BCUser *)user{
-    [BCRef.root.section(BCRefChannelsSection).user(user).child(channel.validKey) setValue:[channel json]];
+-(void)createChannel:(BCChannel *)channel forUser:(BCUser *)user WithCompletion:(void(^)(BCChannel *))completion{
+    [self getUpdatedChannel:channel forUser:user withCompletion:^(BCChannel *updatedChannel) {
+        [BCRef.root.section(BCRefChannelsSection).user(user).child(channel.validKey) setValue:[updatedChannel json] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref) {
+            if(!error){
+                completion(updatedChannel);
+            }else{
+                completion(nil);
+            }
+        }];
+    }];
 }
 
 
@@ -167,6 +185,22 @@
         [self.usersSectionRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
             NSMutableArray *users = [[BCUser convertedToUserFromJSON:snapshot] mutableCopy];
             [subscriber sendNext:users];
+        }];
+        return [RACDisposable disposableWithBlock:^{
+            NSLog(@"%@ disposed",NSStringFromSelector(_cmd));
+        }];
+    }];
+}
+
+-(RACSignal *)createUserSignalForvalidKey:(NSString *)validKey{
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        [self.usersSectionRef.child(validKey) observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+            if(![snapshot isValueExist]){
+                [subscriber sendNext:nil];
+            }else{
+                BCUser *user = [BCUser convertedToUserFromJSON:snapshot];
+                [subscriber sendNext:user];
+            }
         }];
         return [RACDisposable disposableWithBlock:^{
             NSLog(@"%@ disposed",NSStringFromSelector(_cmd));
@@ -204,30 +238,354 @@
     }];
 }
 
--(void)createMessage:(BCMessage *)message inChannel:(BCChannel *)channel withCompletion:(void(^)(BCMessage *, NSError *))completion{
-    [[self.messagesRef.child(message.channelKey).section(BCRefMessagesSection) childByAutoId] setValue:[message json] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref) {
-        if(!error){
-            BCUser *other = [channel otherOf:self.bcUser];
-            [[BCRef.root.section(BCRefMessagesSection).user(other).child(message.channelKey).section(BCRefMessagesSection) childByAutoId] setValue:[message json]];
-            
-            [ref observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-                BCMessage *returnMessage = [BCMessage convertedToTextMessageFromJSON:snapshot];
-                [BCRef.root.section(BCRefChannelsSection).user(returnMessage.author).child(returnMessage.channelKey).child(@"lastMessage") setValue:[returnMessage json]];
-                [BCRef.root.section(BCRefChannelsSection).user(returnMessage.author).child(returnMessage.channelKey).child(@"updatedDate") setValue:returnMessage.createdDate.description];
-                
-                [BCRef.root.section(BCRefChannelsSection).user(other).child(message.channelKey) observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-                    if([snapshot.value isMemberOfClass:[NSNull class]]){
-                        [self createChannel:channel forUser:other];
-                    }else{
-                        
-                    }
-                    [BCRef.root.section(BCRefChannelsSection).user(other).child(message.channelKey).child(@"lastMessage") setValue:[returnMessage json]];
+-(void)getUpdatedUser:(BCUser *)user withCompletion:(void(^)(BCUser *))completion{
+    FIRDatabaseReference *userRef = BCRef.root.section(BCRefUsersSection).user(user);
+    [userRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+        BCUser *updatedUser = [BCUser convertedToUserFromJSON:snapshot];
+        if(!updatedUser){
+            completion(user);
+        }
+        completion(updatedUser);
+    }];
+}
+
+-(void)getUpdatedMessage:(BCMessage *)message withCompletion:(void(^)(BCMessage *))completion{
+    FIRDatabaseReference *messageRef = BCRef.root.section(BCRefMessagesSection).user(message.author).child(message.channelKey).child(message.validKey);
+    
+    [messageRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+        BCMessage *updatedMessage;
+        if([BCMessage isMediaItem:snapshot]){
+            updatedMessage = [BCMessage convertedToPhotoMessageFromJSON:snapshot];
+        }else{
+            updatedMessage = [BCMessage convertedToTextMessageFromJSON:snapshot];
+        }
+
+        [self getUpdatedUser:message.author withCompletion:^(BCUser *updatedUser) {
+            if(!updatedMessage){
+                message.author = updatedUser;
+                completion(message);
+            }else{
+                updatedMessage.author = updatedUser;
+                completion(updatedMessage);
+            }
+        }];
+    }];
+}
+
+-(void)getUpdatedChannel:(BCChannel *)channel forUser:(BCUser *)user withCompletion:(void(^)(BCChannel *))completion{
+    FIRDatabaseReference *ref = BCRef.root.section(BCRefChannelsSection).user(user).child(channel.validKey);
+    [ref observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+        BCChannel *updatedChannel = [BCChannel convertedToChannelFromJSON:snapshot];
+        [self getUpdatedUser:channel.creator withCompletion:^(BCUser *updatedcreator) {
+            [self getUpdatedUser:channel.otherUsers[0] withCompletion:^(BCUser *updatedOther) {
+                if(!updatedChannel){
+                    channel.creator = updatedcreator;
+                    channel.otherUsers = [@[updatedOther] mutableCopy];
+                    completion(channel);
+                }else{
+                    updatedChannel.creator = updatedcreator;
+                    updatedChannel.otherUsers = [@[updatedOther] mutableCopy];
+                    completion(updatedChannel);
+                }
+            }];
+        }];
+    }];
+}
+
+-(void)createTextMessage:(BCMessage *)message inChannel:(BCChannel *)channel withCompletion:(void(^)(BCMessage *, NSError *))completion{
+    
+    [self getUpdatedMessage:message withCompletion:^(BCMessage *updatedMessage) {
+        [self getUpdatedChannel:channel forUser:self.bcUser withCompletion:^(BCChannel *updatedChannel) {
+            [self.messagesRef.child(updatedMessage.channelKey).section(BCRefMessagesSection).child(updatedMessage.validKey) setValue:[updatedMessage json] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref){
+                if(!error){
+                    BCUser *other = [updatedChannel otherOf:self.bcUser];
+                    [BCRef.root.section(BCRefMessagesSection).user(other).child(updatedMessage.channelKey).section(BCRefMessagesSection).child(updatedMessage.validKey) setValue:[updatedMessage json]];
+                    updatedChannel.lastMessage = updatedMessage;
+                    updatedChannel.updatedTimeStamp= updatedMessage.createdTimeStamp;
+                    updatedChannel.isRead = YES;
+                    updatedChannel.unreadMessageNumber = 0;
+                    [BCRef.root.section(BCRefChannelsSection).user(updatedMessage.author).child(updatedMessage.channelKey) setValue:[updatedChannel json]];
                     
-                    [BCRef.root.section(BCRefChannelsSection).user(other).child(returnMessage.channelKey).child(@"updatedDate") setValue:returnMessage.createdDate.description];
+                    [BCRef.root.section(BCRefChannelsSection).user(other).child(updatedMessage.channelKey) observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+                        if([snapshot.value isMemberOfClass:[NSNull class]]){
+                            [self createChannel:updatedChannel forUser:other WithCompletion:^(BCChannel *returnedChannel) {
+                            }];
+                        }else{
+                            
+                        };
+                        [self getUpdatedChannel:channel forUser:other withCompletion:^(BCChannel *otherUpdatedChannel) {
+                            if(!otherUpdatedChannel.isRead){
+                                otherUpdatedChannel.unreadMessageNumber += 1;
+                            }
+                            otherUpdatedChannel.lastMessage = updatedMessage;
+                            otherUpdatedChannel.updatedTimeStamp = updatedMessage.createdTimeStamp;
+                            [BCRef.root.section(BCRefChannelsSection).user(other).child(updatedMessage.channelKey) setValue:[otherUpdatedChannel json]];
+                        }];
+
+                    }];
+                }
+            }];
+        }];
+    }];
+}
+
+-(void)createPhotoMessage:(BCMessage *)photoMessage
+                withAsset:(PHAsset *)photoAsset
+                inChannel:(BCChannel *)channel
+           withCompletion:(void(^)(BCMessage *, NSError *))completion{
+    
+    FIRDatabaseReference *photoMessageFromRef = BCRef.root.section(BCRefMessagesSection).user(self.bcUser).child(channel.validKey).section(BCRefMessagesSection).child(photoMessage.validKey);
+    
+    BCUser *other = [channel otherOf:self.bcUser];
+    FIRDatabaseReference *photoMessageToRef = BCRef.root.section(BCRefMessagesSection).user(other).child(channel.validKey).section(BCRefMessagesSection).child(photoMessage.validKey);
+    
+    [self getUpdatedMessage:photoMessage withCompletion:^(BCMessage *updatedMessage) {
+        [self getUpdatedChannel:channel forUser:self.bcUser withCompletion:^(BCChannel *updatedChannel) {
+            [photoMessageFromRef setValue:[updatedMessage photoJson] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref) {
+                if(!error){
+                    [photoMessageToRef setValue:[updatedMessage photoJson]];
+                    updatedChannel.lastMessage = updatedMessage;
+                    updatedChannel.updatedTimeStamp= updatedMessage.createdTimeStamp;
+                    updatedChannel.isRead = YES;
+                    updatedChannel.unreadMessageNumber = 0;
+                    [BCRef.root.section(BCRefChannelsSection).user(updatedMessage.author).child(updatedMessage.channelKey) setValue:[updatedChannel json]];
+                    
+                    [BCRef.root.section(BCRefChannelsSection).user(other).child(updatedMessage.channelKey) observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+                        if([snapshot.value isMemberOfClass:[NSNull class]]){
+                            [self createChannel:updatedChannel forUser:other WithCompletion:^(BCChannel *returnedChannel) {
+                            }];
+                        }else{
+                            
+                        };
+                        [self getUpdatedChannel:channel forUser:other withCompletion:^(BCChannel *otherUpdatedChannel) {
+                            if(!otherUpdatedChannel.isRead){
+                                otherUpdatedChannel.unreadMessageNumber += 1;
+                            }
+                            otherUpdatedChannel.lastMessage = updatedMessage;
+                            otherUpdatedChannel.updatedTimeStamp = updatedMessage.createdTimeStamp;
+                            [BCRef.root.section(BCRefChannelsSection).user(other).child(updatedMessage.channelKey) setValue:[otherUpdatedChannel json]];
+                        }];
+                    }];
+                    [photoAsset requestContentEditingInputWithOptions:nil completionHandler:^(PHContentEditingInput * _Nullable contentEditingInput, NSDictionary * _Nonnull info) {
+                        NSURL *imageFileURL = contentEditingInput.fullSizeImageURL;
+                        NSString *timeIntervalKey = updatedMessage.validKey;
+                        
+                        FIRStorageReference *destRef = BCRef.storage.section(BCRefChannelsSection).child(updatedChannel.validKey).child(updatedMessage.validKey);
+                        
+                        [destRef putFile:imageFileURL metadata:nil completion:^(FIRStorageMetadata * _Nullable metadata, NSError * _Nullable error) {
+                            if(!error){
+                                [photoMessageFromRef.child(@"mediaItemURL") setValue:[BCRef.storage child:metadata.path].description];
+                                [photoMessageToRef.child(@"mediaItemURL") setValue:[BCRef.storage child:metadata.path].description];
+                                [BCRef.root.section(BCRefMessagesSection).user(self.bcUser).child(updatedMessage.validKey) observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+                                    BCMessage *returnedMessage = [BCMessage convertedToPhotoMessageFromJSON:snapshot];
+                                    completion(returnedMessage,nil);
+                                    
+                                }];
+                            }else{
+                                NSLog(@"Error uploading photo: %@",error.localizedDescription);
+                                completion(nil,error);
+                            }
+                        }];
+                    }];
+                }
+            }];
+        }];
+        
+    }];
+}
+
+-(void)createFileMessage:(BCMessage *)fileMessage
+                withData:(NSData *)data
+                inChannel:(BCChannel *)channel
+           withCompletion:(void(^)(BCMessage *, NSError *))completion{
+    
+    FIRDatabaseReference *fileMessageFromRef = BCRef.root.section(BCRefMessagesSection).user(self.bcUser).child(channel.validKey).section(BCRefMessagesSection).child(fileMessage.validKey);
+    
+    BCUser *other = [channel otherOf:self.bcUser];
+    FIRDatabaseReference *fileMessageToRef = BCRef.root.section(BCRefMessagesSection).user(other).child(channel.validKey).section(BCRefMessagesSection).child(fileMessage.validKey);
+    
+    [self getUpdatedMessage:fileMessage withCompletion:^(BCMessage *updatedMessage) {
+        [self getUpdatedChannel:channel forUser:self.bcUser withCompletion:^(BCChannel *updatedChannel) {
+            [fileMessageFromRef setValue:[updatedMessage photoJson] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref) {
+                if(!error){
+                    [fileMessageToRef setValue:[updatedMessage photoJson]];
+                    updatedChannel.lastMessage = updatedMessage;
+                    updatedChannel.updatedTimeStamp= updatedMessage.createdTimeStamp;
+                    updatedChannel.isRead = YES;
+                    updatedChannel.unreadMessageNumber = 0;
+                    [BCRef.root.section(BCRefChannelsSection).user(updatedMessage.author).child(updatedMessage.channelKey) setValue:[updatedChannel json]];
+                    
+                    [BCRef.root.section(BCRefChannelsSection).user(other).child(updatedMessage.channelKey) observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+                        if([snapshot.value isMemberOfClass:[NSNull class]]){
+                            [self createChannel:updatedChannel forUser:other WithCompletion:^(BCChannel *returnedChannel) {
+                            }];
+                        }else{
+                            
+                        };
+                        [self getUpdatedChannel:channel forUser:other withCompletion:^(BCChannel *otherUpdatedChannel) {
+                            if(!otherUpdatedChannel.isRead){
+                                otherUpdatedChannel.unreadMessageNumber += 1;
+                            }
+                            otherUpdatedChannel.lastMessage = updatedMessage;
+                            otherUpdatedChannel.updatedTimeStamp = updatedMessage.createdTimeStamp;
+                            [BCRef.root.section(BCRefChannelsSection).user(other).child(updatedMessage.channelKey) setValue:[otherUpdatedChannel json]];
+                        }];
+                    }];
+                    
+                    FIRStorageReference *ref = BCRef.storage.section(BCRefChannelsSection).child(channel.validKey).child(fileMessage.validKey);
+                    FIRStorageMetadata *metadata = [[FIRStorageMetadata alloc] init];
+                    metadata.contentType = @"imag/jpeg";
+                    
+                    [ref putData:data metadata:metadata completion:^(FIRStorageMetadata * _Nullable metadata, NSError * _Nullable error) {
+                        if(!error){
+                            [fileMessageFromRef.child(@"mediaItemURL") setValue:[BCRef.storage child:metadata.path].description];
+                            [fileMessageToRef.child(@"mediaItemURL") setValue:[BCRef.storage child:metadata.path].description];
+                            [BCRef.root.section(BCRefMessagesSection).user(self.bcUser).child(updatedMessage.validKey) observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+                                BCMessage *returnedMessage = [BCMessage convertedToPhotoMessageFromJSON:snapshot];
+                                completion(returnedMessage,nil);
+                                
+                            }];
+                        }else{
+                            completion(nil,error);
+                        }
+                    }];
+                }
+            }];
+        }];
+    }];
+}
+
+-(void)fetchImageDataAtURL:(NSString *)url
+              forMediaItem:(JSQPhotoMediaItem *)mediaItem
+clearsPhotoMessgeMapOnSuccessForKey:(NSString *)key
+             withComletion:(void(^)(JSQPhotoMediaItem *returnMediaItem, NSError * error))completion{
+    FIRStorageReference *ref = [[FIRStorage storage] referenceForURL:url];
+    [ref dataWithMaxSize:INT64_MAX completion:^(NSData * _Nullable data, NSError * _Nullable error) {
+        if(error){
+            NSLog(@"Error downloading image data: %@",error.description);
+            completion(nil,error);
+        }
+        
+        [ref metadataWithCompletion:^(FIRStorageMetadata * _Nullable metadata, NSError * _Nullable error) {
+            if(error){
+                NSLog(@"Error downloading metadata: %@",error.description);
+                completion(nil,error);
+            }
+            
+            if([metadata.contentType isEqualToString: @"image/gif"]){
+                mediaItem.image = [UIImage imageWithData:data];
+            }else{
+                mediaItem.image = [UIImage imageWithData:data];
+            }
+            completion(mediaItem,nil);
+        }];
+        
+    }];
+}
+
+
+
+#pragma mark - create avatarMessage
+-(void)createAvatar:(BCAvatar *)avatar
+          withAsset:(PHAsset *)photoAsset
+     withCompletion:(void(^)(BCAvatar *, NSError *))completion{
+    
+    FIRDatabaseReference *avatarRef = BCRef.root.section(BCRefUsersSection).user(self.bcUser).child(avatar.validKey);
+    
+    [avatarRef setValue:[avatar json] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref) {
+        if(!error){
+            [ref observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+                BCAvatar *returnAvatar = [BCAvatar convertedToAvatarFromJSON:snapshot];
+                
+                [photoAsset requestContentEditingInputWithOptions:nil completionHandler:^(PHContentEditingInput * _Nullable contentEditingInput, NSDictionary * _Nonnull info) {
+                    NSURL *imageFileURL = contentEditingInput.fullSizeImageURL;
+//                    NSString *timeIntervalKey = photoMessage.validKey;
+                    
+                    FIRStorageReference *destRef = BCRef.storage.section(BCRefUsersSection).user(avatar.user).child(returnAvatar.validKey);
+                    
+                    [destRef putFile:imageFileURL metadata:nil completion:^(FIRStorageMetadata * _Nullable metadata, NSError * _Nullable error) {
+                        if(!error){
+                            [avatarRef.child(@"url") setValue:[BCRef.storage child:metadata.path].description];
+                        }else{
+                            NSLog(@"Error uploading photo: %@",error.localizedDescription);
+                        }
+                    }];
                 }];
-                completion(returnMessage,nil);
+                completion(returnAvatar,nil);
             }];
         }else{
+            completion(nil,error);
+        }
+    }];
+}
+
+-(void)createAvatar:(BCAvatar *)avatar
+           withData:(NSData *)data
+     withCompletion:(void(^)(BCAvatar *, NSError *))completion{
+    
+    FIRDatabaseReference *avatarRef = BCRef.root.section(BCRefUsersSection).user(avatar.user).child(avatar.validKey);
+    
+    [avatarRef setValue:[avatar json] withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref) {
+        if(!error){
+            [ref observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+                BCAvatar *returnAvatar = [BCAvatar convertedToAvatarFromJSON:snapshot];
+                
+                FIRStorageReference *ref = BCRef.storage.section(BCRefUsersSection).user(returnAvatar.user).child(returnAvatar.validKey);
+                
+                FIRStorageMetadata *metadata = [[FIRStorageMetadata alloc] init];
+                metadata.contentType = @"imag/jpeg";
+                
+                [ref putData:data metadata:metadata completion:^(FIRStorageMetadata * _Nullable metadata, NSError * _Nullable error) {
+                    if(!error){
+                        [avatarRef.child(@"url") setValue:[BCRef.storage child:metadata.path].description];
+                    }
+                }];
+                completion(returnAvatar,nil);
+            }];
+        }else{
+            completion(nil,error);
+        }
+    }];
+}
+
+-(void)fetchImageDataAtURL:(NSString *)url
+             withComletion:(void(^)(UIImage *image, NSError * error))completion{
+    FIRStorageReference *ref = [[FIRStorage storage] referenceForURL:url];
+    [ref dataWithMaxSize:INT64_MAX completion:^(NSData * _Nullable data, NSError * _Nullable error) {
+        if(error){
+            NSLog(@"Error downloading image data: %@",error.description);
+            completion(nil,error);
+        }
+        
+        [ref metadataWithCompletion:^(FIRStorageMetadata * _Nullable metadata, NSError * _Nullable error) {
+            if(error){
+                NSLog(@"Error downloading metadata: %@",error.description);
+                completion(nil,error);
+            }
+            UIImage *image = [UIImage imageWithData:data];
+            completion(image,nil);
+        }];
+        
+    }];
+}
+
+
+//putdata to be continue
+
+
+-(void)deleteMessage:(BCMessage *)message
+           inMessges:(NSMutableArray<BCMessage *>*)messages
+           inChannel:(BCChannel *)channel
+      withCompletion:(void(^)(BCMessage *, NSError *))completion{
+    [messages removeObject:message];
+    [self.messagesRef.child(channel.validKey).section(BCRefMessagesSection).child(message.validKey) setValue:nil withCompletionBlock:^(NSError * _Nullable error, FIRDatabaseReference * _Nonnull ref) {
+        if(!error){
+            NSTimeInterval updatedTimeStamp = [messages lastObject].createdTimeStamp;
+            [self.channelsRef.child(channel.validKey).child(@"lastMessage") setValue:[[messages lastObject] json]];
+            [self.channelsRef.child(channel.validKey).child(@"updatedTimeStamp") setValue:@(updatedTimeStamp)];
+            completion(message,nil);
+        }else{
+            NSLog(@"message remove fail in service: %@",message);
             completion(nil,error);
         }
     }];

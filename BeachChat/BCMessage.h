@@ -21,26 +21,22 @@
 @property(nonatomic, assign) NSTimeInterval createdTimeStamp;
 
 @property(nonatomic, strong) JSQPhotoMediaItem *mediaItem;
-@property(nonatomic, strong) NSString *mediaItemKey;
+@property(nonatomic, strong) NSString *mediaItemURL;
 
--(instancetype)initWithAuthor:(BCUser *)author
-                      channelKey:(NSString *)channelKey
-                         body:(NSString *)body
-            createdTimeStamp:(NSTimeInterval)createdTimeStamp;
-
--(instancetype)initWithAuthor:(BCUser *)author
-                   channelKey:(NSString *)channelKey
-                         body:(NSString *)body;
+//valid key is the createdTimeInterval locally, which is used to keep track of message's key in FRIBASE when to remove the message.
+@property(nonatomic, strong, readonly) NSString *validKey;
 
 
--(instancetype)initWithAuthor:(BCUser *)author
-                   channelKey:(NSString *)channelKey
-                mediatItemKey:(NSString *)mediaItemKey
-             createdTimeStamp:(NSTimeInterval)createTimeStamp;
 
--(instancetype)initWithAuthor:(BCUser *)author
-                   channelKey:(NSString *)channelKey
-                   mediatItem:(JSQMediaItem *)mediaItem;
+
+-(instancetype)initFromLocalWithAuthor:(BCUser *)author
+                            channelKey:(NSString *)channelKey
+                                  body:(NSString *)body;
+
+
+-(instancetype)initFromLocalWithAuthor:(BCUser *)author
+                            channelKey:(NSString *)channelKey
+                         mediatItemURL:(NSString *)mediaItemURL;
 
 
 //Text Messages
@@ -56,4 +52,6 @@
 
 -(NSDictionary *)json;
 -(NSDictionary *)photoJson;
+-(BOOL)isMediaItem;
++(BOOL)isMediaItem:(FIRDataSnapshot *)snapshot;
 @end

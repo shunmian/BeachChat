@@ -16,7 +16,8 @@
 #import <JSQSystemSoundPlayer+JSQMessages.h>
 #import <JSQPhotoMediaItem.h>
 
-@interface BCChannelViewController ()<UITextViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+
+@interface BCChannelViewController ()<UITextViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate>
 
 //Static Entry Data
 @property(nonatomic, strong) BCChannel *channel;
@@ -26,6 +27,7 @@
 
 //Messages
 @property(nonatomic, strong) NSMutableArray <BCMessage *>* messages;
+
 @property(nonatomic, strong) FIRDatabaseReference *messagesRef;
 @property(nonatomic, strong) RACSignal *messagesSignal;
 
@@ -33,6 +35,8 @@
 @property(nonatomic, strong) FIRDatabaseReference *selfTypingRef;
 @property(nonatomic, strong) FIRDatabaseReference *otherTypingRef;
 @property(nonatomic, strong) RACSignal *otherTypingSignal;
+@property(nonatomic, strong) FIRDatabaseReference *isReadRef;
+@property(nonatomic, strong) FIRDatabaseReference *unreadMessageNumberRef;
 
 //Images
 @property(nonatomic, strong) FIRStorageReference *storageImageRef;
@@ -49,6 +53,8 @@
 
 @implementation BCChannelViewController
 
+static NSString * const reuseIdentifier = @"MessageCell";
+
 #pragma mark - 0_Life Cycle
 
 - (void)viewDidLoad {
@@ -62,7 +68,27 @@
     self.collectionView.collectionViewLayout.incomingAvatarViewSize = CGSizeZero;
     self.collectionView.collectionViewLayout.outgoingAvatarViewSize = CGSizeZero;
     
+    UIMenuItem *menuItem = [[UIMenuItem alloc] initWithTitle:@"Forward"
+                                                      action:@selector(forward:)];
+
+    [[UIMenuController sharedMenuController] setMenuItems:[NSArray arrayWithObject:menuItem]];
+    NSArray *menuItems = [UIMenuController sharedMenuController].menuItems;
+    NSLog(@"menuItems:%@",menuItems);
+    
+    
+    
     // Do any additional setup after loading the view.
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [self.isReadRef setValue:@(YES)];
+    [self.unreadMessageNumberRef setValue:@(0)];
+}
+
+-(void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+    [self.isReadRef setValue:@(NO)];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -84,13 +110,11 @@
     if(text.length == 0){
         [self.view endEditing:YES];
     }else{
-        BCMessage *message =[[BCMessage alloc] initWithAuthor:self.chatManager.bcUser
-                                                   channelKey:self.channel.validKey
-                                                         body:text];
+        BCMessage *message =[[BCMessage alloc] initFromLocalWithAuthor:self.chatManager.bcUser channelKey:self.channel.validKey body:text];
         
-        [self.chatManager createMessage:message inChannel:self.channel withCompletion:^(BCMessage *message, NSError *error) {
+        [self.chatManager createTextMessage:message inChannel:self.channel withCompletion:^(BCMessage *message, NSError *error) {
             if(!error){
-                NSLog(@"message sent successfully:%@",message);
+                NSLog(@"message sent successfully:%f",message.createdTimeStamp);
             }else{
                 NSLog(@"message sent failed:%@",error);
             }
@@ -129,6 +153,13 @@
 
 #pragma mark - 2.2_other Setter & Getter
 
+-(NSMutableArray<BCMessage *> *)messages{
+    if(!_messages){
+        _messages = [NSMutableArray new];
+    }
+    return _messages;
+}
+
 -(UITextView *)inputTextView{
     if(!_inputTextView){
         _inputTextView = self.inputToolbar.contentView.textView;
@@ -147,8 +178,25 @@
 -(FIRDatabaseReference *)selfTypingRef{
     if(!_selfTypingRef){
         _selfTypingRef = self.chatManager.messagesRef.child(self.channel.validKey).child(@"isTyping");
+        [_selfTypingRef onDisconnectRemoveValue];
     }
     return _selfTypingRef;
+}
+
+-(FIRDatabaseReference *)isReadRef{
+    if(!_isReadRef){
+        _isReadRef = self.chatManager.channelsRef.child(self.channel.validKey).child(@"isRead");
+        [_isReadRef onDisconnectRemoveValue];
+    }
+    return _isReadRef;
+}
+
+-(FIRDatabaseReference *)unreadMessageNumberRef{
+    if(!_unreadMessageNumberRef){
+        _unreadMessageNumberRef = self.chatManager.channelsRef.child(self.channel.validKey).child(@"unreadMessageNumber");
+    }
+    return _unreadMessageNumberRef;
+
 }
 
 -(FIRDatabaseReference *)otherTypingRef{
@@ -233,6 +281,11 @@
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
     
     JSQMessagesCollectionViewCell *cell = [super collectionView:collectionView cellForItemAtIndexPath:indexPath];
+    
+    cell.textView.selectable = NO;
+    cell.textView.userInteractionEnabled = NO;
+
+    
     JSQMessage *message;
     if(collectionView == self.collectionView){
         message = [self convertFromBCMessageToJSQMessageData: self.messages[indexPath.row]];
@@ -248,6 +301,30 @@
     
     return cell;
 }
+
+- (BOOL)collectionView:(JSQMessagesCollectionView *)collectionView shouldShowMenuForItemAtIndexPath:(NSIndexPath *)indexPath{
+    return [super collectionView:collectionView shouldShowMenuForItemAtIndexPath:indexPath];
+}
+
+-(BOOL)collectionView:(UICollectionView *)collectionView canPerformAction:(SEL)action forItemAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender{
+    if(action == @selector(copy:) || action == @selector(delete:) ||action == @selector(forward:)){
+        return YES; // as per your question
+    }else {
+        return NO;
+    }
+}
+
+-(void)collectionView:(UICollectionView *)collectionView performAction:(SEL)action forItemAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender{
+    if (action == @selector(copy:)){
+        [self copy:indexPath];
+    }else if(action == @selector(delete:)){
+        [self delete:indexPath];
+    }else if(action == @selector(forward:)){
+        [self forward:indexPath];
+    }
+}
+
+
 
 #pragma mark - UITextViewDelegate
 
@@ -276,53 +353,27 @@
     [picker dismissViewControllerAnimated:YES completion:nil];
     
     NSURL *photoReferenceURL = info[UIImagePickerControllerReferenceURL];
+    BCMessage *photoMessage = [[BCMessage alloc] initFromLocalWithAuthor:self.chatManager.bcUser
+                                                              channelKey:self.channel.validKey
+                                                           mediatItemURL:self.imageURLNotSetKey];
     
     if(photoReferenceURL){
         PHFetchResult *assests = [PHAsset fetchAssetsWithALAssetURLs:@[photoReferenceURL] options:nil];
         PHAsset *asset = [assests firstObject];
-        
-        NSDictionary *keyPair = [self sendPhotoMessage];
-        NSString *fromKey = keyPair[@"fromKey"];
-        NSString *toKey = keyPair[@"toKey"];
-        
-        [asset requestContentEditingInputWithOptions:nil completionHandler:^(PHContentEditingInput * _Nullable contentEditingInput, NSDictionary * _Nonnull info) {
-            NSURL *imageFileURL = contentEditingInput.fullSizeImageURL;
-            NSString *path = [NSString stringWithFormat:@"%@",self.channel.validKey];
-            
-            NSString *timeIntervalKey = [NSString stringWithFormat:@"%f",[NSDate timeIntervalSinceReferenceDate]*1000];
-            
-            FIRStorageReference *destRef = [self.storageImageRef child:path];
-            NSLog(@"timeinterval key: %@",timeIntervalKey);
-            
-            [[destRef child:timeIntervalKey] putFile:imageFileURL metadata:nil completion:^(FIRStorageMetadata * _Nullable metadata, NSError * _Nullable error) {
-                if(!error){
-                    [self setUploadFinishedImageURL:[self.storageImageRef child:metadata.path].description forPhotoMessageWithKey:fromKey forUser:self.chatManager.bcUser];
-                    
-                    [self setUploadFinishedImageURL:[self.storageImageRef child:metadata.path].description forPhotoMessageWithKey:toKey forUser:[self.channel otherOf:self.chatManager.bcUser]];
-                    
-                }else{
-                    NSLog(@"Error uploading photo: %@",error.localizedDescription);
-                }
-            }];
+        [self.chatManager createPhotoMessage:photoMessage withAsset:asset inChannel:self.channel withCompletion:^(BCMessage *returnedMessage, NSError *error) {
+            if(!error){
+                NSLog(@"photo message created success:%@",returnedMessage);
+            }
         }];
     }else{
         UIImage *image = info[UIImagePickerControllerOriginalImage];
-        NSDictionary *keyPair = [self sendPhotoMessage];
-        NSString *fromKey = keyPair[@"fromKey"];
-        NSString *toKey = keyPair[@"toKey"];
-        
-        NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
-        NSString *path = [NSString stringWithFormat:@"%@",self.channel.validKey];
-        FIRStorageMetadata *metadata = [[FIRStorageMetadata alloc] init];
-        metadata.contentType = @"imag/jpeg";
-        [[self.storageImageRef child:path] putData:imageData metadata:metadata completion:^(FIRStorageMetadata * _Nullable metadata, NSError * _Nullable error) {
-            if(!error){
-                [self setUploadFinishedImageURL:[self.storageImageRef child:metadata.path].description forPhotoMessageWithKey:fromKey forUser:self.chatManager.bcUser];
-                
-                [self setUploadFinishedImageURL:[self.storageImageRef child:metadata.path].description forPhotoMessageWithKey:toKey forUser:[self.channel otherOf:self.chatManager.bcUser]];
-            }else{
-                NSLog(@"Error uploading photo: %@",error.localizedDescription);
-            }
+        NSData *imageData = UIImageJPEGRepresentation(image, 0.1);
+        [self.chatManager createFileMessage:photoMessage
+                                   withData:imageData inChannel:self.channel
+                             withCompletion:^(BCMessage *returnedMessage, NSError *error) {
+                                 if(!error){
+                                     NSLog(@"photo message from camera created success: %@",returnedMessage);
+                                 }
         }];
     }
 }
@@ -335,17 +386,38 @@
 
 -(RACSignal *)createMessagesSignal{
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        [self.messagesRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-            NSMutableArray *messages = [[BCMessage convertedToTextAndPhotoMessagesFromJSONs:snapshot] mutableCopy];
-            for (BCMessage *message in messages){
-                if(message.mediaItemKey){
-                    message.mediaItem = [[JSQPhotoMediaItem alloc] initWithMaskAsOutgoing:[message.author isEqual:self.chatManager.bcUser]];
-                    if([message.mediaItemKey hasPrefix:@"gs://"]){
-                        [self fetchImageDataAtURL:message.mediaItemKey forMediaItem:message.mediaItem clearsPhotoMessgeMapOnSuccessForKey:nil];
-                    }
+        [self.messagesRef observeEventType:FIRDataEventTypeChildAdded withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+            
+            BCMessage *message;
+            if(![BCMessage isMediaItem:snapshot]){
+                message = [BCMessage convertedToTextMessageFromJSON:snapshot];
+            }else{
+                message = [BCMessage convertedToPhotoMessageFromJSON:snapshot];
+                message.mediaItem = [[JSQPhotoMediaItem alloc] initWithMaskAsOutgoing:[message.author isEqual:self.chatManager.bcUser]];
+                if([message.mediaItemURL hasPrefix:@"gs://"]){
+                    [self.chatManager fetchImageDataAtURL:message.mediaItemURL forMediaItem:message.mediaItem clearsPhotoMessgeMapOnSuccessForKey:nil withComletion:^(JSQPhotoMediaItem *returnMediaItem, NSError *error) {
+                        if(!error){
+                            [self.collectionView reloadData];
+                        }
+                    }];
+                }else{
+                    [self.messagesRef.child(message.validKey) observeEventType:FIRDataEventTypeChildChanged withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+                        if([snapshot.key isEqualToString:@"mediaItemURL"] && [snapshot.value hasPrefix:@"gs://"]){
+                            message.mediaItemURL = snapshot.value;
+                            [self.chatManager fetchImageDataAtURL:message.mediaItemURL
+                                         forMediaItem:message.mediaItem
+                  clearsPhotoMessgeMapOnSuccessForKey:nil withComletion:^(JSQPhotoMediaItem *returnMediaItem, NSError *error) {
+                      if(!error){
+                          [self.collectionView reloadData];
+                      }
+                  }];
+                            [self.messagesRef.child(message.validKey) removeAllObservers];
+                        }
+
+                    }];
                 }
             }
-            [subscriber sendNext:messages];
+            [subscriber sendNext:message];
         }];
         return [RACDisposable disposableWithBlock:^{
             NSLog(@"%@ disposed",NSStringFromSelector(_cmd));
@@ -357,10 +429,11 @@
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         [self.otherTypingRef observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
             NSNumber *isTyping;
-            if([snapshot.value isEqual:[NSNull class]]){
+            if([snapshot.value isKindOfClass:[NSNull class]]){
                 isTyping = @(NO);
+            }else{
+                isTyping = snapshot.value;
             }
-            isTyping = snapshot.value;
             [subscriber sendNext:isTyping];
         }];
         return [RACDisposable disposableWithBlock:^{
@@ -371,8 +444,11 @@
 
 -(void)setUpSignals{
     self.messagesSignal = [self createMessagesSignal];
-    [self.messagesSignal subscribeNext:^(NSMutableArray *messages) {
-        self.messages = messages;
+    [self.messagesSignal subscribeNext:^(BCMessage *message) {
+        [self.messages addObject: message];
+        [self.messages sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+            return [obj1 compare:obj2];
+        }];
         [self.collectionView reloadData];
     }];
     self.otherTypingSignal = [self createOtherTypingSignal];
@@ -392,6 +468,7 @@
     self.senderId = self.chatManager.bcUser.identity;
     self.senderDisplayName = self.chatManager.bcUser.displayName;
     [self.navigationItem setTitle:self.senderDisplayName];
+
     [self setUpSignals];
 }
 
@@ -410,7 +487,7 @@
 
 -(JSQMessage *)convertFromBCMessageToJSQMessageData:(BCMessage *)bcMessage{
     JSQMessage *jsqMessage;
-    if(!bcMessage.mediaItemKey){
+    if(![bcMessage isMediaItem]){
         jsqMessage = [[JSQMessage alloc] initWithSenderId:bcMessage.author.identity
                                                 senderDisplayName:bcMessage.author.displayName
                                                              date:bcMessage.createdDate
@@ -430,64 +507,66 @@
     [self.selfTypingRef setValue:@(NO)];
 }
 
--(NSDictionary *)sendPhotoMessage{
+//-(NSDictionary *)sendPhotoMessage{
+//    BCMessage *photoMessage = [[BCMessage alloc] initFromLocalWithAuthor:self.chatManager.bcUser channelKey:self.channel.validKey mediatItemKey:self.imageURLNotSetKey];
+//    
+//    FIRDatabaseReference *photoMessageFromRef = [self.messagesRef child:photoMessage.validKey];
+//    [photoMessageFromRef setValue:[photoMessage photoJson]];
+//    FIRDatabaseReference *photoMessageToRef = BCRef.root.section(BCRefMessagesSection).user([self.channel otherOf:self.chatManager.bcUser]).child(self.channel.validKey).section(BCRefMessagesSection).child(photoMessage.validKey);
+//    [photoMessageToRef setValue:[photoMessage photoJson]];
+//    
+//    [JSQSystemSoundPlayer jsq_playMessageSentSound];
+//    [self finishSendingMessage];
+//    return @{@"fromKey":photoMessageFromRef.key,
+//             @"toKey":photoMessageToRef.key};
+//}
+
+//-(void)setUploadFinishedImageURL:(NSString *)url forPhotoMessageWithKey:(NSString *)key forUser:(BCUser *)user{
+//    
+//    FIRDatabaseReference *photoMessageRef = [BCRef.root.section(BCRefMessagesSection).user(user).child(self.channel.validKey).section(BCRefMessagesSection) child:key];
+//    [photoMessageRef updateChildValues:@{@"mediaItemURL":url}];
+//}
+//
+//-(void)addPhotoMessgeWithID:(NSString *)ID key:(NSString *)key mediaItem:(JSQPhotoMediaItem *)mediaItem{
+////    BCMessage *message = [[BCMessage alloc] initWithAuthor:self.chatManager.bcUser channelKey:self.channel.validKey mediatItem:mediaItem];
+////    
+////    [self.messages addObject:message];
+//    if(mediaItem.image == nil){
+//        self.PhotoMessageMap[key] = mediaItem;
+//    }
+//    [self.collectionView reloadData];
+//}
+
+
+
+
+-(void)copy:(id)sender{
+    NSIndexPath *indexPath = (NSIndexPath *)sender;
     
-    BCMessage *photoMessage = [[BCMessage alloc] initWithAuthor:self.chatManager.bcUser channelKey:self.channel.validKey mediatItemKey:self.imageURLNotSetKey createdTimeStamp:0];
+    [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
+    JSQMessagesCollectionViewCell *cell = [self collectionView:self.collectionView cellForItemAtIndexPath:indexPath];
     
-    FIRDatabaseReference *photoMessageFromRef = [self.messagesRef childByAutoId];
-    [photoMessageFromRef setValue:[photoMessage photoJson]];
-    FIRDatabaseReference *photoMessageToRef = [BCRef.root.section(BCRefMessagesSection).user([self.channel otherOf:self.chatManager.bcUser]).child(self.channel.validKey).section(BCRefMessagesSection) childByAutoId];
-    [photoMessageToRef setValue:[photoMessage photoJson]];
-    
-    [JSQSystemSoundPlayer jsq_playMessageSentSound];
-    [self finishSendingMessage];
-    return @{@"fromKey":photoMessageFromRef.key,
-             @"toKey":photoMessageToRef.key};
+    [UIPasteboard generalPasteboard].string = cell.textView.text;
 }
 
--(void)setUploadFinishedImageURL:(NSString *)url forPhotoMessageWithKey:(NSString *)key forUser:(BCUser *)user{
-    
-    FIRDatabaseReference *photoMessageRef = [BCRef.root.section(BCRefMessagesSection).user(user).child(self.channel.validKey).section(BCRefMessagesSection) child:key];
-    [photoMessageRef updateChildValues:@{@"mediaItemKey":url}];
-}
-
--(void)addPhotoMessgeWithID:(NSString *)ID key:(NSString *)key mediaItem:(JSQPhotoMediaItem *)mediaItem{
-    BCMessage *message = [[BCMessage alloc] initWithAuthor:self.chatManager.bcUser channelKey:self.channel.validKey mediatItem:mediaItem];
-    
-    [self.messages addObject:message];
-    if(mediaItem.image == nil){
-        self.PhotoMessageMap[key] = mediaItem;
-    }
-    [self.collectionView reloadData];
-}
-
--(void)fetchImageDataAtURL:(NSString *)url
-              forMediaItem:(JSQPhotoMediaItem *)mediaItem
-clearsPhotoMessgeMapOnSuccessForKey:(NSString *)key{
-    FIRStorageReference *ref = [[FIRStorage storage] referenceForURL:url];
-    [ref dataWithMaxSize:INT64_MAX completion:^(NSData * _Nullable data, NSError * _Nullable error) {
-        if(error){
-            NSLog(@"Error downloading image data: %@",error.description);
-            return;
-        }
-        
-        [ref metadataWithCompletion:^(FIRStorageMetadata * _Nullable metadata, NSError * _Nullable error) {
-            if(error){
-                NSLog(@"Error downloading metadata: %@",error.description);
-            }
-            
-            if([metadata.contentType isEqualToString: @"image/gif"]){
-                mediaItem.image = [UIImage imageWithData:data];
-            }else{
-                mediaItem.image = [UIImage imageWithData:data];
-            }
+-(void)delete:(id)sender{
+    NSIndexPath *indexPath = (NSIndexPath *)sender;
+    [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
+    BCMessage *message = self.messages[indexPath.row];
+    [self.chatManager deleteMessage:message inMessges:self.messages inChannel:self.channel withCompletion:^(BCMessage *message, NSError *error) {
+        if(!error){
             [self.collectionView reloadData];
+        }else{
             
-            if(!key)return;
-            [self.PhotoMessageMap removeObjectForKey:key];
-        }];
-        
+        }
     }];
+}
+
+-(void)forward:(id)sender{
+    NSIndexPath *indexPath = (NSIndexPath *)sender;
+    
+    [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
+    NSLog(@"forward!!");
 }
 
 @end

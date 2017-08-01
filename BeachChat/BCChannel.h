@@ -22,7 +22,18 @@
 @property (nonatomic, assign) NSTimeInterval updatedTimeStamp;
 @property (nonatomic, strong, readonly) NSDate *updatedDate;
 @property (nonatomic, strong) BCMessage *lastMessage;
+@property (nonatomic, assign) NSInteger unreadMessageNumber;
+@property (nonatomic, assign) BOOL isRead;
 
+
+-(instancetype)initWithCreator:(BCUser *)creator
+                    otherUsers:(NSMutableArray <BCUser *>*)otherUsers
+                   displayName:(NSString *)displayName
+              createdTimeStamp:(NSTimeInterval)createdTimeStamp
+              updatedTimeStamp:(NSTimeInterval)updatedTimeStamp
+                   lastMessage:(BCMessage *)lastMessage
+                        isRead:(BOOL)isRead
+           unreadMessageNumber:(NSInteger)unreadMessageNumber;
 
 -(instancetype)initWithCreator:(BCUser *)creator
                     otherUsers:(NSMutableArray <BCUser *>*)otherUsers

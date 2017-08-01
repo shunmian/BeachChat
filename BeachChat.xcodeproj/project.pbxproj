@@ -7,11 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		272B8DE41EF11FB300F1822D /* BCDate.m in Sources */ = {isa = PBXBuildFile; fileRef = 272B8DE31EF11FB300F1822D /* BCDate.m */; };
 		272B8DEA1EF148AD00F1822D /* BCChannelTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 272B8DE91EF148AD00F1822D /* BCChannelTableViewCell.m */; };
 		272B8DF41EF17F5500F1822D /* FIRDatabaseReference+Path.m in Sources */ = {isa = PBXBuildFile; fileRef = 272B8DF31EF17F5500F1822D /* FIRDatabaseReference+Path.m */; };
 		272B8DF71EF1841E00F1822D /* BCObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 272B8DF61EF1841E00F1822D /* BCObject.m */; };
 		272B8DFA1EF230A700F1822D /* BCRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 272B8DF91EF230A700F1822D /* BCRef.m */; };
+		272EC6FF1EF4E42900D50D70 /* JSQMessagesCollectionViewCell+MenuSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 272EC6FE1EF4E42900D50D70 /* JSQMessagesCollectionViewCell+MenuSupport.m */; };
+		272EC7051EF54BC400D50D70 /* FIRStorageReference+Path.m in Sources */ = {isa = PBXBuildFile; fileRef = 272EC7041EF54BC400D50D70 /* FIRStorageReference+Path.m */; };
+		272EC7081EF5558500D50D70 /* BCMeTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 272EC7071EF5558500D50D70 /* BCMeTableViewController.m */; };
+		272EC7101EF5584700D50D70 /* BCMeInfoAvatarTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 272EC70F1EF5584700D50D70 /* BCMeInfoAvatarTableViewCell.m */; };
+		272EC7161EF6212C00D50D70 /* FIRDataSnapshot+Exist.m in Sources */ = {isa = PBXBuildFile; fileRef = 272EC7151EF6212C00D50D70 /* FIRDataSnapshot+Exist.m */; };
+		272EC7191EF693CF00D50D70 /* BCMeDisplayNameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 272EC7181EF693CF00D50D70 /* BCMeDisplayNameViewController.m */; };
+		272EC71C1EF6BC9300D50D70 /* BCMeAvatarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 272EC71B1EF6BC9300D50D70 /* BCMeAvatarViewController.m */; };
+		272EC7211EF6CA1B00D50D70 /* BCAvatar.m in Sources */ = {isa = PBXBuildFile; fileRef = 272EC7201EF6CA1B00D50D70 /* BCAvatar.m */; };
+		272EC7241EF7A58500D50D70 /* NSDate+ToString.m in Sources */ = {isa = PBXBuildFile; fileRef = 272EC7231EF7A58500D50D70 /* NSDate+ToString.m */; };
+		272EC72D1EF7BFFF00D50D70 /* BCChannelUnreadMessageNotificationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 272EC72C1EF7BFFF00D50D70 /* BCChannelUnreadMessageNotificationView.m */; };
 		279A95941EE7BF8D00B47CC3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 279A95931EE7BF8D00B47CC3 /* main.m */; };
 		279A95971EE7BF8D00B47CC3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 279A95961EE7BF8D00B47CC3 /* AppDelegate.m */; };
 		279A959D1EE7BF8D00B47CC3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 279A959B1EE7BF8D00B47CC3 /* Main.storyboard */; };
@@ -38,6 +47,7 @@
 		27AEE3571EECDE2D00CFFC08 /* BCFriendsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE3561EECDE2D00CFFC08 /* BCFriendsTableViewController.m */; };
 		27AEE35E1EED56C200CFFC08 /* BCChannelSearchResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AEE35C1EED56C200CFFC08 /* BCChannelSearchResultsViewController.m */; };
 		27E4E41C1EED5C0E00B9FBE4 /* BCChannelViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27E4E41B1EED5C0E00B9FBE4 /* BCChannelViewController.m */; };
+		27FC45AA1EFA6FDB00F19843 /* BCSignUpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27FC45A91EFA6FDB00F19843 /* BCSignUpViewController.m */; };
 		C48F5AD943BC6A610BE09371 /* libPods-BeachChat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 892EF9421DC34DE60BE41945 /* libPods-BeachChat.a */; };
 		E427CC394CC7E71C348DE34F /* libPods-BeachChatUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E085222335CF27412426200 /* libPods-BeachChatUITests.a */; };
 /* End PBXBuildFile section */
@@ -61,8 +71,6 @@
 
 /* Begin PBXFileReference section */
 		1E085222335CF27412426200 /* libPods-BeachChatUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BeachChatUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		272B8DE21EF11FB300F1822D /* BCDate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCDate.h; sourceTree = "<group>"; };
-		272B8DE31EF11FB300F1822D /* BCDate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCDate.m; sourceTree = "<group>"; };
 		272B8DE81EF148AD00F1822D /* BCChannelTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCChannelTableViewCell.h; sourceTree = "<group>"; };
 		272B8DE91EF148AD00F1822D /* BCChannelTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCChannelTableViewCell.m; sourceTree = "<group>"; };
 		272B8DF21EF17F5500F1822D /* FIRDatabaseReference+Path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FIRDatabaseReference+Path.h"; sourceTree = "<group>"; };
@@ -71,6 +79,26 @@
 		272B8DF61EF1841E00F1822D /* BCObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCObject.m; sourceTree = "<group>"; };
 		272B8DF81EF230A700F1822D /* BCRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCRef.h; sourceTree = "<group>"; };
 		272B8DF91EF230A700F1822D /* BCRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCRef.m; sourceTree = "<group>"; };
+		272EC6FD1EF4E42900D50D70 /* JSQMessagesCollectionViewCell+MenuSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JSQMessagesCollectionViewCell+MenuSupport.h"; sourceTree = "<group>"; };
+		272EC6FE1EF4E42900D50D70 /* JSQMessagesCollectionViewCell+MenuSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "JSQMessagesCollectionViewCell+MenuSupport.m"; sourceTree = "<group>"; };
+		272EC7031EF54BC400D50D70 /* FIRStorageReference+Path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FIRStorageReference+Path.h"; sourceTree = "<group>"; };
+		272EC7041EF54BC400D50D70 /* FIRStorageReference+Path.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FIRStorageReference+Path.m"; sourceTree = "<group>"; };
+		272EC7061EF5558500D50D70 /* BCMeTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCMeTableViewController.h; sourceTree = "<group>"; };
+		272EC7071EF5558500D50D70 /* BCMeTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCMeTableViewController.m; sourceTree = "<group>"; };
+		272EC70E1EF5584700D50D70 /* BCMeInfoAvatarTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCMeInfoAvatarTableViewCell.h; sourceTree = "<group>"; };
+		272EC70F1EF5584700D50D70 /* BCMeInfoAvatarTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCMeInfoAvatarTableViewCell.m; sourceTree = "<group>"; };
+		272EC7141EF6212C00D50D70 /* FIRDataSnapshot+Exist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FIRDataSnapshot+Exist.h"; sourceTree = "<group>"; };
+		272EC7151EF6212C00D50D70 /* FIRDataSnapshot+Exist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FIRDataSnapshot+Exist.m"; sourceTree = "<group>"; };
+		272EC7171EF693CE00D50D70 /* BCMeDisplayNameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCMeDisplayNameViewController.h; sourceTree = "<group>"; };
+		272EC7181EF693CF00D50D70 /* BCMeDisplayNameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCMeDisplayNameViewController.m; sourceTree = "<group>"; };
+		272EC71A1EF6BC9300D50D70 /* BCMeAvatarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCMeAvatarViewController.h; sourceTree = "<group>"; };
+		272EC71B1EF6BC9300D50D70 /* BCMeAvatarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCMeAvatarViewController.m; sourceTree = "<group>"; };
+		272EC71F1EF6CA1B00D50D70 /* BCAvatar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCAvatar.h; sourceTree = "<group>"; };
+		272EC7201EF6CA1B00D50D70 /* BCAvatar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCAvatar.m; sourceTree = "<group>"; };
+		272EC7221EF7A58500D50D70 /* NSDate+ToString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+ToString.h"; sourceTree = "<group>"; };
+		272EC7231EF7A58500D50D70 /* NSDate+ToString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+ToString.m"; sourceTree = "<group>"; };
+		272EC72B1EF7BFFF00D50D70 /* BCChannelUnreadMessageNotificationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCChannelUnreadMessageNotificationView.h; sourceTree = "<group>"; };
+		272EC72C1EF7BFFF00D50D70 /* BCChannelUnreadMessageNotificationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCChannelUnreadMessageNotificationView.m; sourceTree = "<group>"; };
 		279A958F1EE7BF8D00B47CC3 /* BeachChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BeachChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		279A95931EE7BF8D00B47CC3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		279A95951EE7BF8D00B47CC3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -124,6 +152,8 @@
 		27AEE35C1EED56C200CFFC08 /* BCChannelSearchResultsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCChannelSearchResultsViewController.m; sourceTree = "<group>"; };
 		27E4E41A1EED5C0E00B9FBE4 /* BCChannelViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCChannelViewController.h; sourceTree = "<group>"; };
 		27E4E41B1EED5C0E00B9FBE4 /* BCChannelViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCChannelViewController.m; sourceTree = "<group>"; };
+		27FC45A81EFA6FDB00F19843 /* BCSignUpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCSignUpViewController.h; sourceTree = "<group>"; };
+		27FC45A91EFA6FDB00F19843 /* BCSignUpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCSignUpViewController.m; sourceTree = "<group>"; };
 		892EF9421DC34DE60BE41945 /* libPods-BeachChat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BeachChat.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		95881D5CB295C31C52407FBB /* Pods-BeachChatUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BeachChatUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BeachChatUITests/Pods-BeachChatUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		ADBD7FFC56EC08458276E514 /* Pods_BeachChatTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BeachChatTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -162,14 +192,72 @@
 		272B8DEE1EF178FC00F1822D /* Helper */ = {
 			isa = PBXGroup;
 			children = (
+				272EC7221EF7A58500D50D70 /* NSDate+ToString.h */,
+				272EC7231EF7A58500D50D70 /* NSDate+ToString.m */,
+				27AEE3211EE8EC4100CFFC08 /* BCChatManager.h */,
+				27AEE3221EE8EC4100CFFC08 /* BCChatManager.m */,
+				272EC7141EF6212C00D50D70 /* FIRDataSnapshot+Exist.h */,
+				272EC7151EF6212C00D50D70 /* FIRDataSnapshot+Exist.m */,
 				272B8DF51EF1841E00F1822D /* BCObject.h */,
 				272B8DF61EF1841E00F1822D /* BCObject.m */,
+				27AEE3331EE926E400CFFC08 /* FIRUser+User.h */,
+				27AEE3341EE926E400CFFC08 /* FIRUser+User.m */,
 				272B8DF81EF230A700F1822D /* BCRef.h */,
 				272B8DF91EF230A700F1822D /* BCRef.m */,
 				272B8DF21EF17F5500F1822D /* FIRDatabaseReference+Path.h */,
 				272B8DF31EF17F5500F1822D /* FIRDatabaseReference+Path.m */,
+				272EC7031EF54BC400D50D70 /* FIRStorageReference+Path.h */,
+				272EC7041EF54BC400D50D70 /* FIRStorageReference+Path.m */,
 			);
 			name = Helper;
+			sourceTree = "<group>";
+		};
+		272EC7091EF5575F00D50D70 /* Me */ = {
+			isa = PBXGroup;
+			children = (
+				272EC7061EF5558500D50D70 /* BCMeTableViewController.h */,
+				272EC7071EF5558500D50D70 /* BCMeTableViewController.m */,
+				272EC70E1EF5584700D50D70 /* BCMeInfoAvatarTableViewCell.h */,
+				272EC70F1EF5584700D50D70 /* BCMeInfoAvatarTableViewCell.m */,
+				272EC71D1EF6BC9B00D50D70 /* DisplayName */,
+				272EC71E1EF6BCAE00D50D70 /* Avatar */,
+			);
+			name = Me;
+			sourceTree = "<group>";
+		};
+		272EC70A1EF5579900D50D70 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				27AEE3391EE94CFC00CFFC08 /* BCFriendRequest.h */,
+				27AEE33A1EE94CFC00CFFC08 /* BCFriendRequest.m */,
+				27AEE32A1EE8FA4C00CFFC08 /* BCChannel.h */,
+				27AEE32B1EE8FA4C00CFFC08 /* BCChannel.m */,
+				27AEE3301EE923C500CFFC08 /* BCMessage.h */,
+				27AEE3311EE923C500CFFC08 /* BCMessage.m */,
+				27AEE32D1EE8FA9000CFFC08 /* BCUser.h */,
+				27AEE32E1EE8FA9000CFFC08 /* BCUser.m */,
+				272EC71F1EF6CA1B00D50D70 /* BCAvatar.h */,
+				272EC7201EF6CA1B00D50D70 /* BCAvatar.m */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		272EC71D1EF6BC9B00D50D70 /* DisplayName */ = {
+			isa = PBXGroup;
+			children = (
+				272EC7171EF693CE00D50D70 /* BCMeDisplayNameViewController.h */,
+				272EC7181EF693CF00D50D70 /* BCMeDisplayNameViewController.m */,
+			);
+			name = DisplayName;
+			sourceTree = "<group>";
+		};
+		272EC71E1EF6BCAE00D50D70 /* Avatar */ = {
+			isa = PBXGroup;
+			children = (
+				272EC71A1EF6BC9300D50D70 /* BCMeAvatarViewController.h */,
+				272EC71B1EF6BC9300D50D70 /* BCMeAvatarViewController.m */,
+			);
+			name = Avatar;
 			sourceTree = "<group>";
 		};
 		279A95861EE7BF8D00B47CC3 = {
@@ -202,25 +290,15 @@
 				279A95961EE7BF8D00B47CC3 /* AppDelegate.m */,
 				279A95CD1EE7CDEF00B47CC3 /* BCLoginViewController.h */,
 				279A95CE1EE7CDEF00B47CC3 /* BCLoginViewController.m */,
+				27FC45A81EFA6FDB00F19843 /* BCSignUpViewController.h */,
+				27FC45A91EFA6FDB00F19843 /* BCSignUpViewController.m */,
 				27AEE3581EED34C600CFFC08 /* 聊天 */,
 				27AEE34D1EEBC8C300CFFC08 /* 好友 */,
-				27AEE3331EE926E400CFFC08 /* FIRUser+User.h */,
-				27AEE3341EE926E400CFFC08 /* FIRUser+User.m */,
 				27AEE31E1EE8EC2500CFFC08 /* BCRootTabController.h */,
 				27AEE31F1EE8EC2500CFFC08 /* BCRootTabController.m */,
-				272B8DE21EF11FB300F1822D /* BCDate.h */,
-				272B8DE31EF11FB300F1822D /* BCDate.m */,
+				272EC7091EF5575F00D50D70 /* Me */,
 				272B8DEE1EF178FC00F1822D /* Helper */,
-				27AEE3211EE8EC4100CFFC08 /* BCChatManager.h */,
-				27AEE3221EE8EC4100CFFC08 /* BCChatManager.m */,
-				27AEE3391EE94CFC00CFFC08 /* BCFriendRequest.h */,
-				27AEE33A1EE94CFC00CFFC08 /* BCFriendRequest.m */,
-				27AEE32A1EE8FA4C00CFFC08 /* BCChannel.h */,
-				27AEE32B1EE8FA4C00CFFC08 /* BCChannel.m */,
-				27AEE3301EE923C500CFFC08 /* BCMessage.h */,
-				27AEE3311EE923C500CFFC08 /* BCMessage.m */,
-				27AEE32D1EE8FA9000CFFC08 /* BCUser.h */,
-				27AEE32E1EE8FA9000CFFC08 /* BCUser.m */,
+				272EC70A1EF5579900D50D70 /* Model */,
 				27AEE33C1EE953B500CFFC08 /* BCUserCell.h */,
 				27AEE33D1EE953B500CFFC08 /* BCUserCell.m */,
 				279A95D01EE7CEB500B47CC3 /* PrefixHeader.pch */,
@@ -310,8 +388,12 @@
 				27AEE3281EE8F33100CFFC08 /* BCChannelsTableViewController.m */,
 				272B8DE81EF148AD00F1822D /* BCChannelTableViewCell.h */,
 				272B8DE91EF148AD00F1822D /* BCChannelTableViewCell.m */,
+				272EC72B1EF7BFFF00D50D70 /* BCChannelUnreadMessageNotificationView.h */,
+				272EC72C1EF7BFFF00D50D70 /* BCChannelUnreadMessageNotificationView.m */,
 				27E4E41A1EED5C0E00B9FBE4 /* BCChannelViewController.h */,
 				27E4E41B1EED5C0E00B9FBE4 /* BCChannelViewController.m */,
+				272EC6FD1EF4E42900D50D70 /* JSQMessagesCollectionViewCell+MenuSupport.h */,
+				272EC6FE1EF4E42900D50D70 /* JSQMessagesCollectionViewCell+MenuSupport.m */,
 				27AEE35B1EED56C200CFFC08 /* BCChannelSearchResultsViewController.h */,
 				27AEE35C1EED56C200CFFC08 /* BCChannelSearchResultsViewController.m */,
 			);
@@ -580,17 +662,24 @@
 			files = (
 				27AEE3411EEA599C00CFFC08 /* BCFriendCategoryTableViewController.m in Sources */,
 				27AEE3201EE8EC2500CFFC08 /* BCRootTabController.m in Sources */,
+				272EC7211EF6CA1B00D50D70 /* BCAvatar.m in Sources */,
+				272EC72D1EF7BFFF00D50D70 /* BCChannelUnreadMessageNotificationView.m in Sources */,
+				272EC7051EF54BC400D50D70 /* FIRStorageReference+Path.m in Sources */,
+				272EC7191EF693CF00D50D70 /* BCMeDisplayNameViewController.m in Sources */,
 				27AEE3231EE8EC4100CFFC08 /* BCChatManager.m in Sources */,
 				27AEE33B1EE94CFC00CFFC08 /* BCFriendRequest.m in Sources */,
 				27AEE3441EEA64E700CFFC08 /* BCUsersTableViewController.m in Sources */,
 				27AEE32C1EE8FA4C00CFFC08 /* BCChannel.m in Sources */,
 				279A95971EE7BF8D00B47CC3 /* AppDelegate.m in Sources */,
 				279A95941EE7BF8D00B47CC3 /* main.m in Sources */,
+				272EC71C1EF6BC9300D50D70 /* BCMeAvatarViewController.m in Sources */,
+				272EC6FF1EF4E42900D50D70 /* JSQMessagesCollectionViewCell+MenuSupport.m in Sources */,
 				272B8DEA1EF148AD00F1822D /* BCChannelTableViewCell.m in Sources */,
 				27AEE33E1EE953B500CFFC08 /* BCUserCell.m in Sources */,
+				272EC7101EF5584700D50D70 /* BCMeInfoAvatarTableViewCell.m in Sources */,
 				27E4E41C1EED5C0E00B9FBE4 /* BCChannelViewController.m in Sources */,
 				27AEE3291EE8F33100CFFC08 /* BCChannelsTableViewController.m in Sources */,
-				272B8DE41EF11FB300F1822D /* BCDate.m in Sources */,
+				27FC45AA1EFA6FDB00F19843 /* BCSignUpViewController.m in Sources */,
 				27AEE3501EEBC8ED00CFFC08 /* BCFriendRequestsTableViewController.m in Sources */,
 				27AEE35E1EED56C200CFFC08 /* BCChannelSearchResultsViewController.m in Sources */,
 				279A95CF1EE7CDEF00B47CC3 /* BCLoginViewController.m in Sources */,
@@ -598,9 +687,12 @@
 				27AEE3471EEA68A200CFFC08 /* BCUserProfileViewController.m in Sources */,
 				272B8DF41EF17F5500F1822D /* FIRDatabaseReference+Path.m in Sources */,
 				272B8DFA1EF230A700F1822D /* BCRef.m in Sources */,
+				272EC7081EF5558500D50D70 /* BCMeTableViewController.m in Sources */,
 				272B8DF71EF1841E00F1822D /* BCObject.m in Sources */,
+				272EC7241EF7A58500D50D70 /* NSDate+ToString.m in Sources */,
 				27AEE34A1EEAD54700CFFC08 /* BCTestViewController.m in Sources */,
 				27AEE3351EE926E400CFFC08 /* FIRUser+User.m in Sources */,
+				272EC7161EF6212C00D50D70 /* FIRDataSnapshot+Exist.m in Sources */,
 				27AEE3321EE923C500CFFC08 /* BCMessage.m in Sources */,
 				27AEE32F1EE8FA9000CFFC08 /* BCUser.m in Sources */,
 			);

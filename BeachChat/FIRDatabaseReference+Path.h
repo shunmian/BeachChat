@@ -18,15 +18,15 @@ typedef NS_ENUM(NSUInteger,BCRefSection){
     BCRefMessagesSection,
 };
 
-typedef FIRDatabaseReference*(^BCPathSectionBlock)(BCRefSection sect);
-typedef FIRDatabaseReference*(^BCPathUserBlock)(BCUser *user);
-typedef FIRDatabaseReference*(^BCPathItemBlock)(BCObject *item);
-typedef FIRDatabaseReference*(^BCPathChildBlock)(NSString *path);
+typedef FIRDatabaseReference*(^BCJSONPathSectionBlock)(BCRefSection sect);
+typedef FIRDatabaseReference*(^BCJSONPathUserBlock)(BCUser *user);
+typedef FIRDatabaseReference*(^BCJSONPathItemBlock)(BCObject *item);
+typedef FIRDatabaseReference*(^BCJSONPathChildBlock)(NSString *path);
 
 @interface FIRDatabaseReference (Path)
-@property(nonatomic, strong, readonly) BCPathSectionBlock section;
-@property(nonatomic, strong, readonly) BCPathUserBlock user;
-@property(nonatomic, strong, readonly) BCPathItemBlock item;
-@property(nonatomic, strong, readonly) BCPathChildBlock child;
-+(FIRDatabaseReference *)root;
+@property(nonatomic, strong, readonly) BCJSONPathSectionBlock section;
+@property(nonatomic, strong, readonly) BCJSONPathUserBlock user;
+@property(nonatomic, strong, readonly) BCJSONPathItemBlock item;
+@property(nonatomic, strong, readonly) BCJSONPathChildBlock child;
+
 @end
